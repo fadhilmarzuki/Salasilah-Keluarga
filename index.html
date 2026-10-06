@@ -40,7 +40,6 @@
         .card-shadow:hover {
             box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -56,7 +55,7 @@
             background: #94a3b8;
         }
         .animate-fade-in {
-            animation: fadeIn 0.25s ease-in-out;
+            animation: fadeIn 0.2s ease-in-out;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
@@ -73,60 +72,63 @@
                     <i class="fa-solid fa-sitemap text-amber-300 text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Carta Salasilah Keluarga Interaktif</h1>
+                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Carta Salasilah Interaktif</h1>
                     <p class="text-xs sm:text-sm text-emerald-200">Keturunan Hj. Abdullah bin Hj. Ahmad & Hjh. Salbiah binti Jab</p>
                 </div>
             </div>
             
-            <!-- Quick Metrics Badge -->
-            <div class="flex flex-wrap gap-2 text-xs font-medium">
-                <span class="bg-emerald-900/70 border border-emerald-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <i class="fa-solid fa-users text-emerald-300"></i>
-                    <span><strong>81</strong> Jumlah Ahli</span>
-                </span>
-                <span class="bg-emerald-900/70 border border-emerald-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <i class="fa-solid fa-child text-amber-300"></i>
-                    <span><strong>9</strong> Anak</span>
-                </span>
-                <span class="bg-emerald-900/70 border border-emerald-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <i class="fa-solid fa-people-group text-blue-300"></i>
-                    <span><strong>29</strong> Cucu</span>
-                </span>
-                <span class="bg-emerald-900/70 border border-emerald-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <i class="fa-solid fa-baby text-purple-300"></i>
-                    <span><strong>21</strong> Cicit</span>
-                </span>
+            <!-- Management & Export/Import Controls -->
+            <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+                <button onclick="openAddMemberModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-user-plus text-sm"></i>
+                    <span>Tambah Ahli</span>
+                </button>
+                <button onclick="openExportModal()" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm" title="Muat Turun & Cetak Laporan PDF / CSV">
+                    <i class="fa-solid fa-file-pdf text-red-700"></i>
+                    <span>Cetak / PDF Senarai</span>
+                </button>
+                <button onclick="exportDataJSON()" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Simpan data ke fail .json">
+                    <i class="fa-solid fa-download text-amber-300"></i>
+                    <span>Simpan Data</span>
+                </button>
+                <label class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer" title="Muat naik fail .json">
+                    <i class="fa-solid fa-upload text-blue-300"></i>
+                    <span>Muat Naik</span>
+                    <input type="file" id="jsonFileInput" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                </label>
             </div>
         </div>
     </header>
 
     <section class="bg-white border-b border-slate-200 sticky top-[73px] z-20 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-3 items-center justify-between">
             
-            <!-- Tab Switcher -->
-            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto text-xs sm:text-sm font-medium">
-                <button id="btn-tab-tree" onclick="switchTab('tree')" class="flex-1 md:flex-initial px-4 py-2 rounded-lg bg-white text-emerald-700 shadow-sm transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-diagram-project"></i>
-                    <span>Carta Pokok</span>
-                </button>
-                <button id="btn-tab-grid" onclick="switchTab('grid')" class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-address-book"></i>
-                    <span>Senarai Kad</span>
-                </button>
-                <button id="btn-tab-stats" onclick="switchTab('stats')" class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Statistik</span>
-                </button>
+            <!-- Dynamic Metrics Summary Bar -->
+            <div id="metricsBar" class="flex flex-wrap gap-2 text-xs font-medium w-full lg:w-auto">
+                <!-- Javascript will inject metrics dynamically -->
             </div>
 
-            <!-- Search & Filter Section -->
-            <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
-                <div class="relative w-full sm:w-64">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari nama, gelaran..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
+            <!-- Search & Filters -->
+            <div class="flex flex-col sm:flex-row items-center gap-2 w-full lg:w-auto">
+                <!-- Tab Switcher -->
+                <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto text-xs font-semibold">
+                    <button id="btn-tab-tree" onclick="switchTab('tree')" class="flex-1 px-3 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-diagram-project"></i> Pokok
+                    </button>
+                    <button id="btn-tab-grid" onclick="switchTab('grid')" class="flex-1 px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-address-book"></i> Kad
+                    </button>
+                    <button id="btn-tab-stats" onclick="switchTab('stats')" class="flex-1 px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie"></i> Statistik
+                    </button>
+                </div>
+
+                <div class="relative w-full sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari nama, gelaran..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
                 </div>
                 
-                <select id="branchFilter" onchange="handleFilter()" class="w-full sm:w-auto px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-700 font-medium">
+                <select id="branchFilter" onchange="handleFilter()" class="w-full sm:w-auto px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-700 font-medium">
                     <option value="ALL">Semua Cabang (9 Anak)</option>
                     <option value="1">1. Pak Long (Mohd. Batzid)</option>
                     <option value="2">2. Mak Ngah (Hjh. Salmiah)</option>
@@ -144,123 +146,215 @@
 
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-1 w-full">
 
+        <!-- Custom Notification Toast -->
+        <div id="toastMessage" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs border border-slate-700 animate-fade-in">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+            <span id="toastText">Mesej pemberitahuan</span>
+        </div>
+
         <!-- VIEW 1: CARTA POKOK (TREE VIEW) -->
         <div id="view-tree" class="block space-y-8 animate-fade-in">
             <!-- Root Parents Banner -->
             <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 border border-amber-200 rounded-3xl p-6 text-center max-w-3xl mx-auto shadow-sm relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-200/40 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl mb-3 text-xl font-bold shadow-inner">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl mb-2 text-xl font-bold shadow-inner">
                     <i class="fa-solid fa-crown"></i>
                 </div>
-                <h2 class="text-lg sm:text-xl font-black text-amber-950 uppercase tracking-wide">Akar Salasilah Utama</h2>
+                <h2 class="text-base sm:text-lg font-black text-amber-950 uppercase tracking-wide">Akar Salasilah Utama</h2>
                 
-                <div class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
-                    <div class="bg-white/90 backdrop-blur px-5 py-3 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
-                        <p class="font-extrabold text-amber-950 text-base">Haji Abdullah bin Haji Ahmad</p>
-                        <p class="text-xs text-amber-700 font-medium mt-0.5">02-04-1927 — 03-08-2010 (83 Tahun)</p>
+                <div class="mt-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs">
+                    <div class="bg-white/90 backdrop-blur px-4 py-2.5 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
+                        <p class="font-extrabold text-amber-950 text-sm">Haji Abdullah bin Haji Ahmad</p>
+                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">02-04-1927 — 03-08-2010 (83 Tahun)</p>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-amber-200/80 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
+                    <div class="w-7 h-7 rounded-full bg-amber-200/80 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
                         &
                     </div>
-                    <div class="bg-white/90 backdrop-blur px-5 py-3 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
-                        <p class="font-extrabold text-amber-950 text-base">Hajjah Salbiah binti Jab</p>
-                        <p class="text-xs text-amber-700 font-medium mt-0.5">xx-xx-1937 — 12-06-2018 (81 Tahun)</p>
-                    </div>
-                </div>
-
-                <div class="mt-4 pt-3 border-t border-amber-200/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-amber-900/80">
-                    <div class="bg-amber-100/50 p-2 rounded-xl">
-                        <strong class="text-amber-950">Ibu Bapa Hj. Abdullah:</strong><br>Hj. Ahmad bin Hj. Man & Halimah binti Hj. Idris
-                    </div>
-                    <div class="bg-amber-100/50 p-2 rounded-xl">
-                        <strong class="text-amber-950">Ibu Bapa Hjh. Salbiah:</strong><br>Jab bin Idris & Che Jam binti Xxxxxx
+                    <div class="bg-white/90 backdrop-blur px-4 py-2.5 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
+                        <p class="font-extrabold text-amber-950 text-sm">Hajjah Salbiah binti Jab</p>
+                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">xx-xx-1937 — 12-06-2018 (81 Tahun)</p>
                     </div>
                 </div>
             </div>
 
             <!-- Dynamic Interactive Tree Rendering Container -->
             <div id="treeContainer" class="space-y-6">
-                <!-- Javascript will populate interactive branch cards here -->
+                <!-- Javascript populates content -->
             </div>
         </div>
 
         <!-- VIEW 2: SENARAI KAD (GRID VIEW) -->
         <div id="view-grid" class="hidden animate-fade-in space-y-4">
             <div class="flex justify-between items-center bg-white px-4 py-3 rounded-xl border border-slate-200">
-                <p class="text-xs sm:text-sm font-semibold text-slate-600" id="gridCountText">Menampilkan semua ahli keluarga</p>
-                <span class="text-xs text-slate-400"><i class="fa-solid fa-hand-pointer mr-1"></i> Klik kad untuk butiran lanjut</span>
+                <p class="text-xs font-semibold text-slate-600" id="gridCountText">Menampilkan semua ahli keluarga</p>
+                <span class="text-xs text-slate-400"><i class="fa-solid fa-hand-pointer mr-1"></i> Klik kad untuk butiran / edit</span>
             </div>
             <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Cards will be populated dynamically -->
+                <!-- Javascript populates content -->
             </div>
         </div>
 
         <!-- VIEW 3: STATISTIK & RINGKASAN -->
         <div id="view-stats" class="hidden animate-fade-in space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-emerald-100 text-emerald-700 rounded-2xl">
-                        <i class="fa-solid fa-users text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">Jumlah Keseluruhan</p>
-                        <p class="text-2xl font-black text-slate-800">81 Orang</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-amber-100 text-amber-700 rounded-2xl">
-                        <i class="fa-solid fa-user-group text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">Anak & Menantu</p>
-                        <p class="text-2xl font-black text-slate-800">9 Anak / 9 Menantu</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-blue-100 text-blue-700 rounded-2xl">
-                        <i class="fa-solid fa-people-roof text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">Cucu & Menantu</p>
-                        <p class="text-2xl font-black text-slate-800">29 Cucu / 13 Menantu</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-purple-100 text-purple-700 rounded-2xl">
-                        <i class="fa-solid fa-baby text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">Generasi Cicit</p>
-                        <p class="text-2xl font-black text-slate-800">21 Cicit</p>
-                    </div>
-                </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="statsOverviewCards">
+                <!-- Javascript populates summary statistics -->
             </div>
 
-            <!-- Breakdown per Branch -->
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-chart-column text-emerald-600"></i>
                     <span>Pecahan Keturunan Mengikut Cabang Anak</span>
                 </h3>
                 <div id="statsBranchList" class="space-y-3">
-                    <!-- Dynamic stats breakdown -->
+                    <!-- Javascript populates branch statistics -->
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal Detail Ahli Keluarga -->
+    <!-- Modal 1: Detail & Action Modal -->
     <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-100">
-            <!-- Close Button -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
-                <i class="fa-solid fa-xmark text-lg"></i>
+            <button onclick="closeModal('detailModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Muat Turun & Cetak Senarai Modal -->
+    <div id="exportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-100 space-y-4">
+            <button onclick="closeModal('exportModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
 
-            <div id="modalContent">
-                <!-- Populated dynamically via JS -->
+            <div class="border-b border-slate-100 pb-3">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-emerald-600"></i>
+                    <span>Muat Turun & Cetak Senarai Terkini</span>
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Pilih format laporan yang anda ingin hasilkan daripada data salasilah terkini.</p>
             </div>
+
+            <div class="space-y-3">
+                <button onclick="generatePDFPrintReport()" class="w-full text-left p-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 rounded-2xl transition flex items-start gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-print"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-slate-900 text-xs">Cetak / Simpan Sebagai PDF (Format Laporan)</h4>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Menjana cetakan berformat rasmi mengikut jadual cabang anak 1-9. Boleh terus disimpan sebagai fail PDF.</p>
+                    </div>
+                </button>
+
+                <button onclick="exportDataCSV()" class="w-full text-left p-4 bg-blue-50 hover:bg-blue-100/80 border border-blue-200 rounded-2xl transition flex items-start gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-slate-900 text-xs">Muat Turun Fail Excel / CSV</h4>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Memuat turun data lengkap dalam bentuk jadual CSV yang serasi dengan Microsoft Excel.</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="closeModal('exportModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Tambah / Edit Ahli Keluarga Form -->
+    <div id="addMemberModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-100 space-y-4">
+            <button onclick="closeModal('addMemberModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="border-b border-slate-100 pb-3">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-user-pen text-emerald-600"></i>
+                    <span id="formTitle">Tambah Ahli Keluarga Baru</span>
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Isi maklumat ahli keluarga di bawah. Salasilah akan dikemaskini secara automatik.</p>
+            </div>
+
+            <form id="memberForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="editTargetId">
+                <input type="hidden" id="editTargetType"> <!-- 'ANAK', 'CUCU', 'CICIT', 'SPOUSE' -->
+
+                <!-- Generation Level Select -->
+                <div id="levelSelectContainer">
+                    <label class="block font-bold text-slate-700 mb-1">Peringkat / Tahap Ahli *</label>
+                    <select id="formTargetLevel" onchange="updateFormParentOptions()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="CUCU">Cucu (Generasi Kedua)</option>
+                        <option value="CICIT">Cicit (Generasi Ketiga)</option>
+                        <option value="PASANGAN">Pasangan / Menantu</option>
+                    </select>
+                </div>
+
+                <!-- Target Parent Selector -->
+                <div id="parentSelectContainer">
+                    <label class="block font-bold text-slate-700 mb-1" id="formParentLabel">Pilih Ibu / Bapa (Ahli Anak) *</label>
+                    <select id="formParentSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <!-- Dynamically filled -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nama Penuh *</label>
+                        <input type="text" id="formName" required placeholder="Contoh: Muhammad Ali bin Ahmad" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Kod Rujukan / No. Urutan</label>
+                        <input type="text" id="formCode" placeholder="Contoh: [22] atau (08-02)" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tarikh Lahir</label>
+                        <input type="text" id="formDob" placeholder="Contoh: 15-08-2005" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Taraf Perkahwinan / Status</label>
+                        <select id="formStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="Bujang">Bujang</option>
+                            <option value="Bernikah">Bernikah</option>
+                            <option value="Meninggal Dunia">Meninggal Dunia</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tarikh Nikah (Jika berkaitan)</label>
+                        <input type="text" id="formMarriageDate" placeholder="Contoh: 20-05-2022" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tarikh / Masa Meninggal (Jika ada)</label>
+                        <input type="text" id="formDod" placeholder="Contoh: 25-05-2007 (06:30 A.M.)" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nota Tambahan (Berat lahir, hospital, catatan)</label>
+                    <textarea id="formNotes" rows="2" placeholder="Contoh: 3.20 kg Hospital Sultanah Bahiyah" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm">
+                        Simpan Maklumat
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -274,8 +368,8 @@
     </footer>
 
     <script>
-        // Data Struktur Salasilah Keluarga
-        const familyTreeData = [
+        // Default Family Data
+        const defaultFamilyTreeData = [
             {
                 id: "1",
                 code: "(1)",
@@ -314,6 +408,7 @@
                         },
                         children: [
                             {
+                                id: "1-1-1",
                                 code: "[20] 21)",
                                 name: "Nur Hana",
                                 dob: "03-08-2025 (19:08)",
@@ -392,9 +487,9 @@
                             marriageDate: "08-12-2011"
                         },
                         children: [
-                            { code: "[03] 1i)", name: "Nik Aryssa Kamillya", dob: "25-08-2012 (18:41)", notes: "2.72 kg HSbrng Jaya", status: "Bujang" },
-                            { code: "[05] 1ii)", name: "Nik Affiya Kamillya", dob: "23-09-2014 (02:11)", notes: "2.80 kg HSg Petani", status: "Bujang" },
-                            { code: "[09] 1iii)", name: "Nik Azzaiya Kamillya", dob: "05-09-2019 (10:34)", notes: "2.75 kg HSitAbHalim, SgPetani", status: "Bujang" }
+                            { id: "2-1-1", code: "[03] 1i)", name: "Nik Aryssa Kamillya", dob: "25-08-2012 (18:41)", notes: "2.72 kg HSbrng Jaya", status: "Bujang" },
+                            { id: "2-1-2", code: "[05] 1ii)", name: "Nik Affiya Kamillya", dob: "23-09-2014 (02:11)", notes: "2.80 kg HSg Petani", status: "Bujang" },
+                            { id: "2-1-3", code: "[09] 1iii)", name: "Nik Azzaiya Kamillya", dob: "05-09-2019 (10:34)", notes: "2.75 kg HSitAbHalim, SgPetani", status: "Bujang" }
                         ]
                     },
                     {
@@ -410,9 +505,9 @@
                             marriageDate: "14-09-2014"
                         },
                         children: [
-                            { code: "[12] 2i)", name: "Nik Khalaf Affan", dob: "04-02-2021 (11:05)", notes: "2.84 kg HBKota Bharu", status: "Bujang" },
-                            { code: "[14] 2ii)", name: "Nik Khawla Afnan", dob: "27-07-2022 (16:12)", notes: "3.02 kg KBMCKota Bharu", status: "Bujang" },
-                            { code: "[17] 2iii)", name: "Nik Khalaf Alwan", dob: "14-10-2023 (14:09)", notes: "2.74 kg KBMCKota Bharu", status: "Bujang" }
+                            { id: "2-2-1", code: "[12] 2i)", name: "Nik Khalaf Affan", dob: "04-02-2021 (11:05)", notes: "2.84 kg HBKota Bharu", status: "Bujang" },
+                            { id: "2-2-2", code: "[14] 2ii)", name: "Nik Khawla Afnan", dob: "27-07-2022 (16:12)", notes: "3.02 kg KBMCKota Bharu", status: "Bujang" },
+                            { id: "2-2-3", code: "[17] 2iii)", name: "Nik Khalaf Alwan", dob: "14-10-2023 (14:09)", notes: "2.74 kg KBMCKota Bharu", status: "Bujang" }
                         ]
                     },
                     {
@@ -428,10 +523,10 @@
                             marriageDate: "01-06-2012"
                         },
                         children: [
-                            { code: "[04] 3i)", name: "Nik Qhaleef Rizqi", dob: "21-03-2013 (04:30)", notes: "2.50 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { code: "[08] 3ii)", name: "Nik Qhaseh Nurnrina", dob: "24-12-2015 (04:30)", notes: "3.30 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { code: "[10] 3iii)", name: "Nik Qhaira Ezara", dob: "08-08-2019 (05:11)", notes: "3.00 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { code: "[13] 3iv)", name: "Nik Khalish Ziqri", dob: "30-03-2021 (04:23)", notes: "3.10 kg HBTBainun, Ipoh", status: "Bujang" }
+                            { id: "2-3-1", code: "[04] 3i)", name: "Nik Qhaleef Rizqi", dob: "21-03-2013 (04:30)", notes: "2.50 kg HBTBainun, Ipoh", status: "Bujang" },
+                            { id: "2-3-2", code: "[08] 3ii)", name: "Nik Qhaseh Nurnrina", dob: "24-12-2015 (04:30)", notes: "3.30 kg HBTBainun, Ipoh", status: "Bujang" },
+                            { id: "2-3-3", code: "[10] 3iii)", name: "Nik Qhaira Ezara", dob: "08-08-2019 (05:11)", notes: "3.00 kg HBTBainun, Ipoh", status: "Bujang" },
+                            { id: "2-3-4", code: "[13] 3iv)", name: "Nik Khalish Ziqri", dob: "30-03-2021 (04:23)", notes: "3.10 kg HBTBainun, Ipoh", status: "Bujang" }
                         ]
                     }
                 ]
@@ -465,9 +560,9 @@
                             marriageDate: "06-06-2009"
                         },
                         children: [
-                            { code: "[01] 1i)", name: "Muhamad Faiz Hakimi", dob: "09-02-2010", status: "Bujang" },
-                            { code: "[02] 1ii)", name: "Nur Hanis Fasihah", dob: "21-06-2011", status: "Bujang" },
-                            { code: "[07] 1iii)", name: "Muhamad Fawwaz Hamzi", dob: "16-10-2015", status: "Bujang" }
+                            { id: "3-1-1", code: "[01] 1i)", name: "Muhamad Faiz Hakimi", dob: "09-02-2010", status: "Bujang" },
+                            { id: "3-1-2", code: "[02] 1ii)", name: "Nur Hanis Fasihah", dob: "21-06-2011", status: "Bujang" },
+                            { id: "3-1-3", code: "[07] 1iii)", name: "Muhamad Fawwaz Hamzi", dob: "16-10-2015", status: "Bujang" }
                         ]
                     },
                     {
@@ -491,8 +586,8 @@
                             marriageDate: "29-08-2014"
                         },
                         children: [
-                            { code: "[06] 3i)", name: "Hani Humairah", dob: "12-10-2015", status: "Bujang" },
-                            { code: "[18] 3ii)", name: "Hadid Hafiy", dob: "27-04-2024", status: "Bujang" }
+                            { id: "3-3-1", code: "[06] 3i)", name: "Hani Humairah", dob: "12-10-2015", status: "Bujang" },
+                            { id: "3-3-2", code: "[18] 3ii)", name: "Hadid Hafiy", dob: "27-04-2024", status: "Bujang" }
                         ]
                     },
                     {
@@ -508,8 +603,8 @@
                             marriageDate: "02-02-2019"
                         },
                         children: [
-                            { code: "[11] 4i)", name: "Muhammad Adam Fateh", dob: "28-03-2020 (19:55)", notes: "3.02 kg HSitBahiyah, A.Star", status: "Bujang" },
-                            { code: "[19] 4ii)", name: "Muhammad Azam Fathi", dob: "08-10-2024 (10:12)", notes: "2.51 kg HCTM, Cheras", status: "Bujang" }
+                            { id: "3-4-1", code: "[11] 4i)", name: "Muhammad Adam Fateh", dob: "28-03-2020 (19:55)", notes: "3.02 kg HSitBahiyah, A.Star", status: "Bujang" },
+                            { id: "3-4-2", code: "[19] 4ii)", name: "Muhammad Azam Fathi", dob: "08-10-2024 (10:12)", notes: "2.51 kg HCTM, Cheras", status: "Bujang" }
                         ]
                     }
                 ]
@@ -572,7 +667,7 @@
                             marriageDate: "29-06-2024"
                         },
                         children: [
-                            { code: "[21] 4i)", name: "Ahmad Zidan Alhaq", dob: "23-05-2026 (16:07)", notes: "3.03 kg H. Besar Taiping", status: "Bujang" }
+                            { id: "5-4-1", code: "[21] 4i)", name: "Ahmad Zidan Alhaq", dob: "23-05-2026 (16:07)", notes: "3.03 kg H. Besar Taiping", status: "Bujang" }
                         ]
                     },
                     {
@@ -620,7 +715,7 @@
                             marriageDate: "13-06-2022"
                         },
                         children: [
-                            { code: "[16] 1i)", name: "Dhia Medina", dob: "02-03-2023 (09:16)", notes: "2.82 kg H. Seberang Jaya", status: "Bujang" }
+                            { id: "6-1-1", code: "[16] 1i)", name: "Dhia Medina", dob: "02-03-2023 (09:16)", notes: "2.82 kg H. Seberang Jaya", status: "Bujang" }
                         ]
                     },
                     {
@@ -636,7 +731,7 @@
                             marriageDate: "20-05-2022"
                         },
                         children: [
-                            { code: "[15] 2i)", name: "Zara Humaira", dob: "15-02-2023 (12:50)", notes: "3.71 kg HospitalKualaLipis", status: "Bujang" }
+                            { id: "6-2-1", code: "[15] 2i)", name: "Zara Humaira", dob: "15-02-2023 (12:50)", notes: "3.71 kg HospitalKualaLipis", status: "Bujang" }
                         ]
                     },
                     { id: "6-3", code: "(17) 3)", name: "Amirul Hakimi", dob: "23-04-1997", status: "Bujang", children: [] },
@@ -708,15 +803,59 @@
             }
         ];
 
+        let familyTreeData = JSON.parse(JSON.stringify(defaultFamilyTreeData));
         let currentTab = 'tree';
         let filterBranch = 'ALL';
         let searchQuery = '';
 
         window.onload = function() {
+            refreshAllViews();
+        };
+
+        function refreshAllViews() {
+            updateMetricsHeader();
             renderTreeView();
             renderGridView();
             renderStatsView();
-        };
+        }
+
+        function updateMetricsHeader() {
+            let totalAnak = familyTreeData.length;
+            let totalAnakMenantu = familyTreeData.filter(a => a.spouse).length;
+            
+            let totalCucu = 0;
+            let totalCucuMenantu = 0;
+            let totalCicit = 0;
+
+            familyTreeData.forEach(a => {
+                totalCucu += a.children.length;
+                a.children.forEach(c => {
+                    if (c.spouse) totalCucuMenantu++;
+                    if (c.children) totalCicit += c.children.length;
+                });
+            });
+
+            let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
+
+            document.getElementById('metricsBar').innerHTML = `
+                <span class="bg-emerald-900/10 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-users text-emerald-600"></i>
+                    <span><strong>${grandTotal}</strong> Jumlah Ahli</span>
+                </span>
+                <span class="bg-amber-900/10 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-child text-amber-600"></i>
+                    <span><strong>${totalAnak}</strong> Anak</span>
+                </span>
+                <span class="bg-blue-900/10 text-blue-900 border border-blue-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-people-group text-blue-600"></i>
+                    <span><strong>${totalCucu}</strong> Cucu</span>
+                </span>
+                <span class="bg-purple-900/10 text-purple-900 border border-purple-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-baby text-purple-600"></i>
+                    <span><strong>${totalCicit}</strong> Cicit</span>
+                </span>
+            `;
+        }
 
         function switchTab(tab) {
             currentTab = tab;
@@ -727,9 +866,9 @@
             ['tree', 'grid', 'stats'].forEach(t => {
                 const btn = document.getElementById(`btn-tab-${t}`);
                 if (t === tab) {
-                    btn.className = "flex-1 md:flex-initial px-4 py-2 rounded-lg bg-white text-emerald-700 shadow-sm font-bold transition flex items-center justify-center gap-2";
+                    btn.className = "flex-1 px-3 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm font-bold transition flex items-center justify-center gap-1.5";
                 } else {
-                    btn.className = "flex-1 md:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2";
+                    btn.className = "flex-1 px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1.5";
                 }
             });
         }
@@ -769,7 +908,7 @@
                 container.innerHTML = `
                     <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
                         <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
-                        <p class="text-slate-500 text-sm">Tiada maklumat dijumpai mengikut tapisan anda.</p>
+                        <p class="text-slate-500 text-xs">Tiada maklumat dijumpai mengikut carian/tapisan anda.</p>
                     </div>
                 `;
                 return;
@@ -777,18 +916,18 @@
 
             filteredData.forEach(child => {
                 const branchCard = document.createElement('div');
-                branchCard.className = "bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-6 hover:border-emerald-300 transition";
+                branchCard.className = "bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5 hover:border-emerald-300 transition";
 
                 let statusBadge = child.status === 'Meninggal Dunia' 
-                    ? `<span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full text-xs font-semibold"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal Dunia</span>`
-                    : `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-semibold">Bernikah</span>`;
+                    ? `<span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal Dunia</span>`
+                    : `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold">Bernikah</span>`;
 
                 let spouseHtml = child.spouse ? `
-                    <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                    <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-600">
                         <i class="fa-solid fa-heart text-rose-500"></i>
                         <span class="font-bold text-slate-800">${child.spouse.name}</span>
-                        <span class="text-slate-400 font-mono">(${child.spouse.code})</span>
-                        ${child.spouse.marriageDate ? `<span class="bg-rose-50 text-rose-700 px-2 py-0.5 rounded-md text-[11px] ml-auto font-medium">Nikah: ${child.spouse.marriageDate}</span>` : ''}
+                        <span class="text-slate-400 font-mono text-[11px]">(${child.spouse.code})</span>
+                        ${child.spouse.marriageDate ? `<span class="bg-rose-50 text-rose-700 px-2 py-0.5 rounded-md text-[10px] font-medium">Nikah: ${child.spouse.marriageDate}</span>` : ''}
                     </div>
                 ` : '';
 
@@ -799,37 +938,42 @@
                     <!-- Head Anak -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                         <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-sm shrink-0 mt-0.5 shadow-sm">
+                            <div class="w-9 h-9 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-xs shrink-0 mt-0.5 shadow-sm">
                                 ${child.branch}
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="font-mono text-xs font-extrabold text-emerald-700">${child.code}</span>
-                                    <h3 class="font-bold text-base sm:text-lg text-slate-900">${child.name}</h3>
-                                    ${child.title ? `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-xs font-bold">${child.title}</span>` : ''}
+                                    <h3 class="font-bold text-base text-slate-900">${child.name}</h3>
+                                    ${child.title ? `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[11px] font-bold">${child.title}</span>` : ''}
                                     ${statusBadge}
                                 </div>
-                                <p class="text-xs text-slate-500 mt-0.5">Lahir: ${child.dob} ${child.dod ? `| Meninggal: ${child.dod}` : ''}</p>
-                                ${child.notes ? `<p class="text-xs text-amber-800 bg-amber-50 p-2 rounded-xl mt-2 border border-amber-200"><i class="fa-solid fa-circle-info mr-1"></i>${child.notes}</p>` : ''}
+                                <p class="text-xs text-slate-500 mt-0.5">Lahir: ${child.dob || '—'} ${child.dod ? `| Meninggal: ${child.dod}` : ''}</p>
+                                ${child.notes ? `<p class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl mt-2 border border-amber-200"><i class="fa-solid fa-circle-info mr-1"></i>${child.notes}</p>` : ''}
                                 ${spouseHtml}
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 text-xs font-medium text-slate-500 self-end sm:self-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                            <span><strong class="text-slate-800">${childrenCount}</strong> Cucu</span>
-                            <span>•</span>
-                            <span><strong class="text-slate-800">${grandChildrenCount}</strong> Cicit</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openAddMemberModal('CUCU', '${child.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[10px]"></i> Cucu Baru
+                            </button>
+                            <div class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                                <span><strong class="text-slate-800">${childrenCount}</strong> Cucu</span>
+                                <span>•</span>
+                                <span><strong class="text-slate-800">${grandChildrenCount}</strong> Cicit</span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Generasi Cucu -->
                     <div class="pl-2 sm:pl-4 border-l-2 border-emerald-300 space-y-4">
-                        <h4 class="text-xs font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <h4 class="text-[11px] font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-folder-tree text-emerald-600"></i>
                             <span>Cucu-Cucu (${childrenCount})</span>
                         </h4>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${child.children.map(cucu => renderCucuCard(cucu)).join('')}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            ${child.children.map(cucu => renderCucuCard(cucu, child.id)).join('')}
                         </div>
                     </div>
                 `;
@@ -838,7 +982,7 @@
             });
         }
 
-        function renderCucuCard(cucu) {
+        function renderCucuCard(cucu, parentAnakId) {
             let statusTag = cucu.status === 'Bernikah' 
                 ? `<span class="bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold border border-blue-200">Bernikah</span>`
                 : cucu.status === 'Meninggal Dunia'
@@ -858,34 +1002,55 @@
 
             let cicitList = cucu.children && cucu.children.length > 0 ? `
                 <div class="mt-3 pt-2 border-t border-dashed border-slate-200">
-                    <p class="text-[11px] font-bold text-purple-900 mb-1.5 flex items-center gap-1">
-                        <i class="fa-solid fa-baby text-purple-600"></i>
-                        <span>Cicit [${cucu.children.length}]</span>
-                    </p>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <p class="text-[11px] font-bold text-purple-900 flex items-center gap-1">
+                            <i class="fa-solid fa-baby text-purple-600"></i>
+                            <span>Cicit [${cucu.children.length}]</span>
+                        </p>
+                        <button onclick="openAddMemberModal('CICIT', '${cucu.id}')" class="text-[10px] text-purple-700 hover:text-purple-900 font-bold bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-200">
+                            + Tambah Cicit
+                        </button>
+                    </div>
                     <div class="space-y-1.5 pl-1">
                         ${cucu.children.map(cicit => `
-                            <div class="bg-purple-50/80 rounded-xl p-2 border border-purple-100 text-xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-slate-800">${cicit.name}</span>
-                                    <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code}</span>
+                            <div class="bg-purple-50/80 rounded-xl p-2 border border-purple-100 text-xs flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-bold text-slate-800">${cicit.name}</span>
+                                        <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code || ''}</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob || '—'}</p>
+                                    ${cicit.notes ? `<p class="text-[10px] text-purple-800 italic mt-0.5"><i class="fa-solid fa-scale-balanced mr-1"></i>${cicit.notes}</p>` : ''}
                                 </div>
-                                <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob}</p>
-                                ${cicit.notes ? `<p class="text-[10px] text-purple-800 italic mt-0.5"><i class="fa-solid fa-scale-balanced mr-1"></i>${cicit.notes}</p>` : ''}
+                                <button onclick="deleteMember('${cicit.id}', 'CICIT')" class="text-slate-400 hover:text-rose-600 p-1" title="Padam cicit">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
                             </div>
                         `).join('')}
                     </div>
                 </div>
-            ` : '';
+            ` : `
+                <div class="mt-2 text-right">
+                    <button onclick="openAddMemberModal('CICIT', '${cucu.id}')" class="text-[10px] text-purple-700 hover:text-purple-900 font-bold bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-200">
+                        + Tambah Cicit
+                    </button>
+                </div>
+            `;
 
             return `
-                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 card-shadow hover:bg-white transition">
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 card-shadow hover:bg-white transition relative group">
                     <div class="flex items-start justify-between gap-2">
                         <div>
-                            <span class="font-mono text-[11px] font-black text-blue-700">${cucu.code}</span>
+                            <span class="font-mono text-[11px] font-black text-blue-700">${cucu.code || ''}</span>
                             <h5 class="font-bold text-sm text-slate-900">${cucu.name}</h5>
-                            <p class="text-[11px] text-slate-500">Lahir: ${cucu.dob} ${cucu.dod ? `| Dod: ${cucu.dod}` : ''}</p>
+                            <p class="text-[11px] text-slate-500">Lahir: ${cucu.dob || '—'} ${cucu.dod ? `| Dod: ${cucu.dod}` : ''}</p>
                         </div>
-                        ${statusTag}
+                        <div class="flex items-center gap-1">
+                            ${statusTag}
+                            <button onclick="deleteMember('${cucu.id}', 'CUCU')" class="text-slate-400 hover:text-rose-600 p-1 opacity-80 group-hover:opacity-100" title="Padam cucu">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                     ${cucu.notes ? `<p class="text-[11px] text-slate-600 bg-white p-2 rounded-xl border border-slate-200 mt-2">${cucu.notes}</p>` : ''}
                     ${spouseInfo}
@@ -963,9 +1128,57 @@
         }
 
         function renderStatsView() {
-            const container = document.getElementById('statsBranchList');
-            container.innerHTML = '';
+            const overviewContainer = document.getElementById('statsOverviewCards');
+            const branchContainer = document.getElementById('statsBranchList');
 
+            let totalAnak = familyTreeData.length;
+            let totalAnakMenantu = familyTreeData.filter(a => a.spouse).length;
+            let totalCucu = 0;
+            let totalCucuMenantu = 0;
+            let totalCicit = 0;
+
+            familyTreeData.forEach(a => {
+                totalCucu += a.children.length;
+                a.children.forEach(c => {
+                    if (c.spouse) totalCucuMenantu++;
+                    if (c.children) totalCicit += c.children.length;
+                });
+            });
+
+            let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
+
+            overviewContainer.innerHTML = `
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3.5 bg-emerald-100 text-emerald-700 rounded-2xl"><i class="fa-solid fa-users text-2xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Jumlah Keseluruhan</p>
+                        <p class="text-2xl font-black text-slate-800">${grandTotal} Orang</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3.5 bg-amber-100 text-amber-700 rounded-2xl"><i class="fa-solid fa-user-group text-2xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Anak & Menantu</p>
+                        <p class="text-xl font-black text-slate-800">${totalAnak} Anak / ${totalAnakMenantu} Menantu</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3.5 bg-blue-100 text-blue-700 rounded-2xl"><i class="fa-solid fa-people-roof text-2xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Cucu & Menantu</p>
+                        <p class="text-xl font-black text-slate-800">${totalCucu} Cucu / ${totalCucuMenantu} Menantu</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3.5 bg-purple-100 text-purple-700 rounded-2xl"><i class="fa-solid fa-baby text-2xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Generasi Cicit</p>
+                        <p class="text-2xl font-black text-slate-800">${totalCicit} Cicit</p>
+                    </div>
+                </div>
+            `;
+
+            branchContainer.innerHTML = '';
             familyTreeData.forEach(anak => {
                 const cucuCount = anak.children.length;
                 const cucuMenantuCount = anak.children.filter(c => c.spouse).length;
@@ -1002,8 +1215,159 @@
                     </div>
                 `;
 
-                container.appendChild(item);
+                branchContainer.appendChild(item);
             });
+        }
+
+        function openAddMemberModal(presetLevel = 'CUCU', parentId = '') {
+            document.getElementById('formTitle').innerText = "Tambah Ahli Keluarga Baru";
+            document.getElementById('memberForm').reset();
+            document.getElementById('editTargetId').value = '';
+
+            const levelSelect = document.getElementById('formTargetLevel');
+            levelSelect.value = presetLevel;
+
+            updateFormParentOptions(parentId);
+            document.getElementById('addMemberModal').classList.remove('hidden');
+        }
+
+        function updateFormParentOptions(selectedParentId = '') {
+            const level = document.getElementById('formTargetLevel').value;
+            const parentSelect = document.getElementById('formParentSelect');
+            const parentLabel = document.getElementById('formParentLabel');
+            parentSelect.innerHTML = '';
+
+            if (level === 'CUCU' || level === 'PASANGAN') {
+                parentLabel.innerText = "Pilih Ibu / Bapa (Anak Utama) *";
+                familyTreeData.forEach(anak => {
+                    const opt = document.createElement('option');
+                    opt.value = anak.id;
+                    opt.text = `${anak.branch}. ${anak.name} (${anak.title || 'Anak'})`;
+                    if (selectedParentId && anak.id === selectedParentId) opt.selected = true;
+                    parentSelect.appendChild(opt);
+                });
+            } else if (level === 'CICIT') {
+                parentLabel.innerText = "Pilih Ibu / Bapa (Ahli Cucu) *";
+                familyTreeData.forEach(anak => {
+                    anak.children.forEach(cucu => {
+                        const opt = document.createElement('option');
+                        opt.value = cucu.id;
+                        opt.text = `${anak.branch}) ${cucu.name} [Anak: ${anak.name}]`;
+                        if (selectedParentId && cucu.id === selectedParentId) opt.selected = true;
+                        parentSelect.appendChild(opt);
+                    });
+                });
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const level = document.getElementById('formTargetLevel').value;
+            const parentId = document.getElementById('formParentSelect').value;
+            const name = document.getElementById('formName').value.trim();
+            const code = document.getElementById('formCode').value.trim();
+            const dob = document.getElementById('formDob').value.trim();
+            const status = document.getElementById('formStatus').value;
+            const marriageDate = document.getElementById('formMarriageDate').value.trim();
+            const dod = document.getElementById('formDod').value.trim();
+            const notes = document.getElementById('formNotes').value.trim();
+
+            const newId = "id_" + Date.now();
+
+            if (level === 'CUCU') {
+                const targetAnak = familyTreeData.find(a => a.id === parentId);
+                if (targetAnak) {
+                    targetAnak.children.push({
+                        id: newId,
+                        code: code || `(${targetAnak.children.length + 1})`,
+                        name: name,
+                        dob: dob,
+                        status: status,
+                        notes: notes,
+                        children: []
+                    });
+                }
+            } else if (level === 'CICIT') {
+                for (let anak of familyTreeData) {
+                    let targetCucu = anak.children.find(c => c.id === parentId);
+                    if (targetCucu) {
+                        if (!targetCucu.children) targetCucu.children = [];
+                        targetCucu.children.push({
+                            id: newId,
+                            code: code || `[${targetCucu.children.length + 1}]`,
+                            name: name,
+                            dob: dob,
+                            status: status,
+                            notes: notes
+                        });
+                        break;
+                    }
+                }
+            } else if (level === 'PASANGAN') {
+                const targetAnak = familyTreeData.find(a => a.id === parentId);
+                if (targetAnak) {
+                    targetAnak.spouse = {
+                        code: code || `(${targetAnak.branch}-S)`,
+                        name: name,
+                        dob: dob,
+                        marriageDate: marriageDate
+                    };
+                }
+            }
+
+            refreshAllViews();
+            closeModal('addMemberModal');
+            showToast("Berjaya menambah ahli keluarga baru!");
+        }
+
+        function deleteMember(id, level) {
+            if (level === 'CUCU') {
+                familyTreeData.forEach(anak => {
+                    anak.children = anak.children.filter(c => c.id !== id);
+                });
+            } else if (level === 'CICIT') {
+                familyTreeData.forEach(anak => {
+                    anak.children.forEach(cucu => {
+                        if (cucu.children) {
+                            cucu.children = cucu.children.filter(cc => cc.id !== id);
+                        }
+                    });
+                });
+            }
+
+            refreshAllViews();
+            showToast("Ahli keluarga telah dipadam.");
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(familyTreeData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "family_tree_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Fail JSON data salasilah berjaya dimuat turun!");
+        }
+
+        function importDataJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                try {
+                    const parsedData = JSON.parse(fileReader.result);
+                    if (Array.isArray(parsedData) && parsedData.length > 0) {
+                        familyTreeData = parsedData;
+                        refreshAllViews();
+                        showToast("Data salasilah berjaya dikemaskini dari fail JSON!");
+                    } else {
+                        showToast("Format fail JSON tidak sah!");
+                    }
+                } catch (err) {
+                    showToast("Gagal membaca fail JSON.");
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
         }
 
         function showDetailModal(member) {
@@ -1011,18 +1375,18 @@
             const container = document.getElementById('modalContent');
 
             container.innerHTML = `
-                <div class="space-y-4">
+                <div class="space-y-4 text-xs">
                     <div class="flex items-center gap-2">
-                        <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-1 rounded-lg font-mono">${member.codeDisplay || member.code || 'REKOD'}</span>
-                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg">${member.role || 'Ahli Keluarga'}</span>
+                        <span class="bg-emerald-100 text-emerald-800 font-black px-2.5 py-1 rounded-lg font-mono">${member.codeDisplay || member.code || 'REKOD'}</span>
+                        <span class="bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded-lg">${member.role || 'Ahli Keluarga'}</span>
                     </div>
 
                     <div>
-                        <h3 class="text-xl font-extrabold text-slate-900">${member.name}</h3>
-                        ${member.title ? `<p class="text-sm font-bold text-amber-700 mt-0.5">Gelaran: ${member.title}</p>` : ''}
+                        <h3 class="text-lg font-extrabold text-slate-900">${member.name}</h3>
+                        ${member.title ? `<p class="text-xs font-bold text-amber-700 mt-0.5">Gelaran: ${member.title}</p>` : ''}
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs text-slate-700">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-slate-700">
                         <p><strong class="text-slate-900">Tarikh Lahir:</strong> ${member.dob || 'Tiada rekod'}</p>
                         ${member.status ? `<p><strong class="text-slate-900">Status / Taraf:</strong> ${member.status}</p>` : ''}
                         ${member.dod ? `<p class="text-rose-700"><strong class="text-slate-900">Tarikh Meninggal:</strong> ${member.dod}</p>` : ''}
@@ -1032,7 +1396,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <button onclick="closeModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition shadow-sm">
+                        <button onclick="closeModal('detailModal')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition shadow-sm">
                             Tutup
                         </button>
                     </div>
@@ -1042,8 +1406,216 @@
             modal.classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('detailModal').classList.add('hidden');
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function openExportModal() {
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function generatePDFPrintReport() {
+            closeModal('exportModal');
+
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                showToast("Sila benarkan pop-up browser untuk mencetak PDF!");
+                return;
+            }
+
+            let todayDate = new Date().toLocaleDateString('ms-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            let printHTML = `
+            <!DOCTYPE html>
+            <html lang="ms">
+            <head>
+                <meta charset="UTF-8">
+                <title>Laporan Salasilah Keturunan Hj Abdullah & Hjh Salbiah</title>
+                <style>
+                    body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11px; color: #1e293b; padding: 20px; line-height: 1.4; }
+                    .header { text-align: center; border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 20px; }
+                    .header h1 { margin: 0; font-size: 16px; color: #0f766e; text-transform: uppercase; }
+                    .header h2 { margin: 4px 0 0 0; font-size: 12px; font-weight: normal; color: #334155; }
+                    .header p { margin: 4px 0 0 0; font-size: 10px; color: #64748b; italic; }
+                    .section-title { background: #f0fdf4; color: #166534; font-size: 12px; font-weight: bold; padding: 6px 10px; border-left: 4px solid #16a34a; margin-top: 18px; margin-bottom: 8px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
+                    th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+                    th { background-color: #f8fafc; font-weight: bold; color: #334155; }
+                    .text-center { text-align: center; }
+                    .font-mono { font-family: monospace; }
+                    .badge { display: inline-block; padding: 2px 5px; font-size: 9px; font-weight: bold; border-radius: 4px; }
+                    .badge-anak { background: #dcfce7; color: #15803d; }
+                    .badge-cucu { background: #dbeafe; color: #1e40af; }
+                    .badge-cicit { background: #f3e8ff; color: #6b21a8; }
+                    @media print {
+                        body { padding: 0; }
+                        button { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>SALASILAH KETURUNAN HAJI ABDULLAH BIN HAJI AHMAD & HAJJAH SALBIAH BINTI JAB</h1>
+                    <h2>Laporan Senarai Ahli Keluarga Terkini</h2>
+                    <p>Tarikh Dijana: ${todayDate} | Dokumen Rujukan Rasmi</p>
+                </div>
+            `;
+
+            familyTreeData.forEach(anak => {
+                printHTML += `
+                    <div class="section-title">
+                        Cabang ${anak.branch}: ${anak.name} ${anak.title ? '(' + anak.title + ')' : ''} 
+                        ${anak.spouse ? ' & ' + anak.spouse.name : ''}
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 8%;">Kod</th>
+                                <th style="width: 12%;">Hubungan</th>
+                                <th style="width: 30%;">Nama Penuh</th>
+                                <th style="width: 12%;">Tarikh Lahir</th>
+                                <th style="width: 12%;">Tarikh Nikah</th>
+                                <th style="width: 26%;">Status / Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Anak Utama -->
+                            <tr style="background-color: #f1f5f9; font-weight: bold;">
+                                <td class="font-mono">${anak.code}</td>
+                                <td><span class="badge badge-anak">Anak Utama</span></td>
+                                <td>${anak.name} ${anak.title ? '(' + anak.title + ')' : ''}</td>
+                                <td>${anak.dob || '—'}</td>
+                                <td>—</td>
+                                <td>${anak.status} ${anak.dod ? '| Meninggal: ' + anak.dod : ''} ${anak.notes ? '(' + anak.notes + ')' : ''}</td>
+                            </tr>
+                `;
+
+                if (anak.spouse) {
+                    printHTML += `
+                        <tr style="background-color: #fafafa;">
+                            <td class="font-mono">${anak.spouse.code || ''}</td>
+                            <td>Pasangan</td>
+                            <td>${anak.spouse.name}</td>
+                            <td>${anak.spouse.dob || '—'}</td>
+                            <td>${anak.spouse.marriageDate || '—'}</td>
+                            <td>${anak.spouse.dod ? 'Meninggal: ' + anak.spouse.dod : '—'}</td>
+                        </tr>
+                    `;
+                }
+
+                anak.children.forEach(cucu => {
+                    printHTML += `
+                        <tr>
+                            <td class="font-mono" style="padding-left: 12px;">${cucu.code || ''}</td>
+                            <td><span class="badge badge-cucu">Cucu</span></td>
+                            <td><strong>${cucu.name}</strong></td>
+                            <td>${cucu.dob || '—'}</td>
+                            <td>${cucu.spouse ? (cucu.spouse.marriageDate || '—') : '—'}</td>
+                            <td>${cucu.status} ${cucu.notes ? '[' + cucu.notes + ']' : ''}</td>
+                        </tr>
+                    `;
+
+                    if (cucu.spouse) {
+                        printHTML += `
+                            <tr style="color: #475569;">
+                                <td class="font-mono" style="padding-left: 18px;">${cucu.spouse.code || ''}</td>
+                                <td>Cucu Menantu</td>
+                                <td>${cucu.spouse.name}</td>
+                                <td>${cucu.spouse.dob || '—'}</td>
+                                <td>${cucu.spouse.marriageDate || '—'}</td>
+                                <td>—</td>
+                            </tr>
+                        `;
+                    }
+
+                    if (cucu.children) {
+                        cucu.children.forEach(cicit => {
+                            printHTML += `
+                                <tr style="color: #581c87; background-color: #faf5ff;">
+                                    <td class="font-mono" style="padding-left: 24px;">${cicit.code || ''}</td>
+                                    <td><span class="badge badge-cicit">Cicit</span></td>
+                                    <td>${cicit.name}</td>
+                                    <td>${cicit.dob || '—'}</td>
+                                    <td>—</td>
+                                    <td>${cicit.notes || '—'}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                });
+
+                printHTML += `
+                        </tbody>
+                    </table>
+                `;
+            });
+
+            printHTML += `
+                <div style="margin-top: 30px; text-align: center; font-size: 10px; color: #94a3b8; border-t: 1px solid #e2e8f0; padding-top: 10px;">
+                    Dokumen ini dijana secara automatik daripada Sistem Carta Salasilah Interaktif Keturunan Hj. Abdullah & Hjh. Salbiah
+                </div>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                        }, 500);
+                    };
+                <\/script>
+            </body>
+            </html>
+            `;
+
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+            showToast("Menjana laporan cetakan PDF...");
+        }
+
+        function exportDataCSV() {
+            closeModal('exportModal');
+
+            let csvRows = [];
+            csvRows.push(["Cabang", "Generasi/Peranan", "Kod Rujukan", "Nama Penuh", "Tarikh Lahir", "Tarikh Nikah", "Status", "Catatan / Nota"]);
+
+            familyTreeData.forEach(anak => {
+                csvRows.push([anak.branch, "Anak", anak.code, anak.name, anak.dob || "", "", anak.status, anak.notes || ""]);
+                if (anak.spouse) {
+                    csvRows.push([anak.branch, "Anak Menantu", anak.spouse.code || "", anak.spouse.name, anak.spouse.dob || "", anak.spouse.marriageDate || "", "", ""]);
+                }
+
+                anak.children.forEach(cucu => {
+                    csvRows.push([anak.branch, "Cucu", cucu.code || "", cucu.name, cucu.dob || "", "", cucu.status, cucu.notes || ""]);
+                    if (cucu.spouse) {
+                        csvRows.push([anak.branch, "Cucu Menantu", cucu.spouse.code || "", cucu.spouse.name, cucu.spouse.dob || "", cucu.spouse.marriageDate || "", "", ""]);
+                    }
+
+                    if (cucu.children) {
+                        cucu.children.forEach(cicit => {
+                            csvRows.push([anak.branch, "Cicit", cicit.code || "", cicit.name, cicit.dob || "", "", cicit.status, cicit.notes || ""]);
+                        });
+                    }
+                });
+            });
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(",")).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Senarai_Keluarga_Hj_Abdullah_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast("Senarai ahli keluarga berjaya dimuat turun sebagai fail CSV/Excel!");
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toastMessage');
+            document.getElementById('toastText').innerText = text;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
         }
     </script>
 </body>
