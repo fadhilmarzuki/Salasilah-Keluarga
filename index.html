@@ -277,16 +277,15 @@
             <div class="border-b border-slate-100 pb-3">
                 <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-user-pen text-emerald-600"></i>
-                    <span id="formTitle">Tambah Ahli Keluarga Baru</span>
+                    <span id="formTitle">Tambah / Kemaskini Ahli Keluarga</span>
                 </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Isi maklumat ahli keluarga di bawah. Salasilah akan dikemaskini secara automatik.</p>
+                <p class="text-xs text-slate-500 mt-0.5">Kemaskini status perkahwinan, kematian, tarikh lahir, atau nota ahli keluarga di bawah.</p>
             </div>
 
             <form id="memberForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5 text-xs">
                 <input type="hidden" id="editTargetId">
-                <input type="hidden" id="editTargetType"> <!-- 'ANAK', 'CUCU', 'CICIT', 'SPOUSE' -->
 
-                <!-- Generation Level Select -->
+                <!-- Generation Level Select (Only active when adding new) -->
                 <div id="levelSelectContainer">
                     <label class="block font-bold text-slate-700 mb-1">Peringkat / Tahap Ahli *</label>
                     <select id="formTargetLevel" onchange="updateFormParentOptions()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
@@ -321,8 +320,8 @@
                         <input type="text" id="formDob" placeholder="Contoh: 15-08-2005" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">Taraf Perkahwinan / Status</label>
-                        <select id="formStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block font-bold text-slate-700 mb-1">Status Kehidupan / Perkahwinan *</label>
+                        <select id="formStatus" onchange="toggleDeathFields()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                             <option value="Bujang">Bujang</option>
                             <option value="Bernikah">Bernikah</option>
                             <option value="Meninggal Dunia">Meninggal Dunia</option>
@@ -336,13 +335,18 @@
                         <input type="text" id="formMarriageDate" placeholder="Contoh: 20-05-2022" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">Tarikh / Masa Meninggal (Jika ada)</label>
-                        <input type="text" id="formDod" placeholder="Contoh: 25-05-2007 (06:30 A.M.)" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block font-bold text-slate-700 mb-1 text-rose-700">Tarikh / Masa Meninggal (Jika ada)</label>
+                        <input type="text" id="formDod" placeholder="Contoh: 25-05-2007 (06:30 A.M.)" class="w-full px-3 py-2 bg-rose-50/50 border border-rose-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none">
                     </div>
                 </div>
 
+                <div id="deathCauseContainer">
+                    <label class="block font-bold text-rose-800 mb-1">Sebab Kematian (Jika Meninggal Dunia)</label>
+                    <input type="text" id="formCauseOfDeath" placeholder="Contoh: Komplikasi Diabetes / Sakit tua / Covid19" class="w-full px-3 py-2 bg-rose-50/50 border border-rose-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                </div>
+
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Nota Tambahan (Berat lahir, hospital, catatan)</label>
+                    <label class="block font-bold text-slate-700 mb-1">Nota Tambahan (Hospital, berat lahir, gelaran, dll.)</label>
                     <textarea id="formNotes" rows="2" placeholder="Contoh: 3.20 kg Hospital Sultanah Bahiyah" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
 
@@ -383,12 +387,14 @@
                 branch: 1,
                 generation: 1,
                 spouse: {
+                    id: "1_spouse",
                     code: "(1-3)",
                     name: "Aminah binti Hashim",
                     dob: "01-02-1959",
                     dod: "20-12-2021 (09:00 P.M.)",
                     ageAtDeath: "61 tahun & 10 bulan",
                     causeOfDeath: "Covid19",
+                    status: "Meninggal Dunia",
                     marriageDate: "03-11-1990"
                 },
                 children: [
@@ -401,6 +407,7 @@
                         causeOfDeath: "Complications due to diabetes",
                         status: "Meninggal Dunia",
                         spouse: {
+                            id: "1-1_spouse",
                             code: "(07-04)",
                             name: "Mohamad Najib bin Mihat",
                             dob: "18-02-1990",
@@ -424,6 +431,7 @@
                         dob: "10-08-1996",
                         status: "Bernikah",
                         spouse: {
+                            id: "1-2_spouse",
                             code: "(15-12)",
                             name: "Nurul Ezzati Atiqah binti Ismail",
                             dob: "24-07-1991",
@@ -438,6 +446,7 @@
                         dob: "17-12-1999",
                         status: "Bernikah",
                         spouse: {
+                            id: "1-3_spouse",
                             code: "(18-10)",
                             name: "Nur Atikah binti Kamarudin",
                             dob: "21-01-1999",
@@ -465,12 +474,14 @@
                 branch: 2,
                 generation: 1,
                 spouse: {
+                    id: "2_spouse",
                     code: "(2-1)",
                     name: "Nik Abdul Kadir bin Hj. Nik Omar",
                     dob: "09-09-1939",
                     dod: "05-04-2002",
                     ageAtDeath: "63 tahun",
                     causeOfDeath: "Sakit jantung",
+                    status: "Meninggal Dunia",
                     marriageDate: "23-08-1980"
                 },
                 children: [
@@ -481,6 +492,7 @@
                         dob: "09-11-1981",
                         status: "Bernikah",
                         spouse: {
+                            id: "2-1_spouse",
                             code: "(01-02)",
                             name: "Yuhaniza binti Mohd Yusof",
                             dob: "22-01-1981",
@@ -499,6 +511,7 @@
                         dob: "11-04-1984",
                         status: "Bernikah",
                         spouse: {
+                            id: "2-2_spouse",
                             code: "(03-06)",
                             name: "Nurazlin binti A Wahab",
                             dob: "17-05-1985",
@@ -517,6 +530,7 @@
                         dob: "02-09-1986",
                         status: "Bernikah",
                         spouse: {
+                            id: "2-3_spouse",
                             code: "(05-03)",
                             name: "Nurul Alizan binti Mohd. Ramli",
                             dob: "29-07-1986",
@@ -541,6 +555,7 @@
                 branch: 3,
                 generation: 1,
                 spouse: {
+                    id: "3_spouse",
                     code: "(3-2)",
                     name: "Hajjah Nor Haryati binti Hashim",
                     dob: "11-03-1964",
@@ -554,6 +569,7 @@
                         dob: "23-02-1984",
                         status: "Bernikah",
                         spouse: {
+                            id: "3-1_spouse",
                             code: "(02-01)",
                             name: "Nor Haslina binti Saad",
                             dob: "13-01-1984",
@@ -580,6 +596,7 @@
                         dob: "23-11-1989",
                         status: "Bernikah",
                         spouse: {
+                            id: "3-3_spouse",
                             code: "(06-05)",
                             name: "Siti Haidah binti Mohd Ijam",
                             dob: "02-09-1988",
@@ -597,6 +614,7 @@
                         dob: "13-08-1993",
                         status: "Bernikah",
                         spouse: {
+                            id: "3-4_spouse",
                             code: "(09-07)",
                             name: "Muhammad Fauzan bin Yunus",
                             dob: "14-03-1988",
@@ -619,6 +637,7 @@
                 branch: 4,
                 generation: 1,
                 spouse: {
+                    id: "4_spouse",
                     code: "(4-7)",
                     name: "Jamaludin bin Ahmad",
                     dob: "24-12-1965",
@@ -645,6 +664,7 @@
                 branch: 5,
                 generation: 1,
                 spouse: {
+                    id: "5_spouse",
                     code: "(5-4)",
                     name: "Haji Ahmad Kamil bin Ibrahim",
                     dob: "11-07-1960",
@@ -661,6 +681,7 @@
                         dob: "20-11-1996",
                         status: "Bernikah",
                         spouse: {
+                            id: "5-4_spouse",
                             code: "(16-11)",
                             name: "Amirul bin Zulkefli",
                             dob: "07-06-1993",
@@ -677,6 +698,7 @@
                         dob: "07-08-2000",
                         status: "Bernikah",
                         spouse: {
+                            id: "5-5_spouse",
                             code: "(20-13)",
                             name: "Siti Nadia Syafikah binti Ab Aziz",
                             dob: "04-08-2000",
@@ -696,6 +718,7 @@
                 branch: 6,
                 generation: 1,
                 spouse: {
+                    id: "6_spouse",
                     code: "(6-5)",
                     name: "Siti Tashah binti Md. Noh",
                     dob: "08-10-1968",
@@ -709,6 +732,7 @@
                         dob: "13-04-1994",
                         status: "Bernikah",
                         spouse: {
+                            id: "6-1_spouse",
                             code: "(11-09)",
                             name: "Mohammad Akmal bin Hashim",
                             dob: "14-11-1992",
@@ -725,6 +749,7 @@
                         dob: "02-09-1995",
                         status: "Bernikah",
                         spouse: {
+                            id: "6-2_spouse",
                             code: "(12-08)",
                             name: "Nur Hazira binti Amran",
                             dob: "12-03-1995",
@@ -750,6 +775,7 @@
                 branch: 7,
                 generation: 1,
                 spouse: {
+                    id: "7_spouse",
                     code: "(7-6)",
                     name: "Ir. Haji Abd. Rashid bin Haji Hashim, P. Eng.",
                     dob: "05-02-1963",
@@ -770,6 +796,7 @@
                 branch: 8,
                 generation: 1,
                 spouse: {
+                    id: "8_spouse",
                     code: "(8-9)",
                     name: "Mohd. Rozaini bin Md. Yusoff",
                     dob: "05-08-1966",
@@ -791,6 +818,7 @@
                 branch: 9,
                 generation: 1,
                 spouse: {
+                    id: "9_spouse",
                     code: "(9-8)",
                     name: "Farizan bin Ramli",
                     dob: "04-05-1975",
@@ -919,15 +947,21 @@
                 branchCard.className = "bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5 hover:border-emerald-300 transition";
 
                 let statusBadge = child.status === 'Meninggal Dunia' 
-                    ? `<span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal Dunia</span>`
+                    ? `<span class="bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal Dunia</span>`
                     : `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold">Bernikah</span>`;
 
                 let spouseHtml = child.spouse ? `
-                    <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                        <i class="fa-solid fa-heart text-rose-500"></i>
-                        <span class="font-bold text-slate-800">${child.spouse.name}</span>
-                        <span class="text-slate-400 font-mono text-[11px]">(${child.spouse.code})</span>
-                        ${child.spouse.marriageDate ? `<span class="bg-rose-50 text-rose-700 px-2 py-0.5 rounded-md text-[10px] font-medium">Nikah: ${child.spouse.marriageDate}</span>` : ''}
+                    <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-heart text-rose-500"></i>
+                            <span class="font-bold text-slate-800">${child.spouse.name}</span>
+                            <span class="text-slate-400 font-mono text-[11px]">(${child.spouse.code || ''})</span>
+                            ${child.spouse.marriageDate ? `<span class="bg-rose-50 text-rose-700 px-2 py-0.5 rounded-md text-[10px] font-medium">Nikah: ${child.spouse.marriageDate}</span>` : ''}
+                            ${child.spouse.status === 'Meninggal Dunia' ? `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-medium"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal</span>` : ''}
+                        </div>
+                        <button onclick="openEditMemberModal('${child.spouse.id || child.id + '_spouse'}')" class="text-slate-400 hover:text-emerald-700 text-[11px] p-1 font-semibold flex items-center gap-1" title="Edit Pasangan">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
                     </div>
                 ` : '';
 
@@ -947,8 +981,12 @@
                                     <h3 class="font-bold text-base text-slate-900">${child.name}</h3>
                                     ${child.title ? `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[11px] font-bold">${child.title}</span>` : ''}
                                     ${statusBadge}
+                                    <button onclick="openEditMemberModal('${child.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ml-1" title="Kemaskini maklumat anak">
+                                        <i class="fa-solid fa-pen-to-square text-emerald-600"></i> Edit
+                                    </button>
                                 </div>
                                 <p class="text-xs text-slate-500 mt-0.5">Lahir: ${child.dob || '—'} ${child.dod ? `| Meninggal: ${child.dod}` : ''}</p>
+                                ${child.causeOfDeath ? `<p class="text-[11px] text-rose-800 bg-rose-50 p-1.5 rounded-xl mt-1.5 border border-rose-200"><i class="fa-solid fa-notes-medical mr-1"></i>Sebab Kematian: ${child.causeOfDeath}</p>` : ''}
                                 ${child.notes ? `<p class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl mt-2 border border-amber-200"><i class="fa-solid fa-circle-info mr-1"></i>${child.notes}</p>` : ''}
                                 ${spouseHtml}
                             </div>
@@ -986,7 +1024,7 @@
             let statusTag = cucu.status === 'Bernikah' 
                 ? `<span class="bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold border border-blue-200">Bernikah</span>`
                 : cucu.status === 'Meninggal Dunia'
-                ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-bold">Meninggal</span>`
+                ? `<span class="bg-rose-50 text-rose-700 text-[10px] px-2 py-0.5 rounded font-bold border border-rose-200">Meninggal</span>`
                 : `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-bold">Bujang</span>`;
 
             let spouseInfo = cucu.spouse ? `
@@ -994,9 +1032,11 @@
                     <div>
                         <i class="fa-solid fa-heart text-rose-500 mr-1 text-[10px]"></i>
                         <span class="font-bold text-slate-800">${cucu.spouse.name}</span>
-                        <span class="text-[10px] text-slate-400 font-mono">(${cucu.spouse.code})</span>
+                        <span class="text-[10px] text-slate-400 font-mono">(${cucu.spouse.code || ''})</span>
                     </div>
-                    ${cucu.spouse.marriageDate ? `<span class="text-[10px] bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-medium">Nikah: ${cucu.spouse.marriageDate}</span>` : ''}
+                    <button onclick="openEditMemberModal('${cucu.spouse.id || cucu.id + '_spouse'}')" class="text-slate-400 hover:text-emerald-700 text-[10px]" title="Edit Pasangan Cucu">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
                 </div>
             ` : '';
 
@@ -1018,13 +1058,20 @@
                                     <div class="flex items-center gap-1.5">
                                         <span class="font-bold text-slate-800">${cicit.name}</span>
                                         <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code || ''}</span>
+                                        ${cicit.status === 'Meninggal Dunia' ? `<span class="bg-rose-100 text-rose-700 text-[9px] px-1 rounded font-bold">Meninggal</span>` : ''}
                                     </div>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob || '—'}</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob || '—'} ${cicit.dod ? `| Dod: ${cicit.dod}` : ''}</p>
+                                    ${cicit.causeOfDeath ? `<p class="text-[9px] text-rose-800">Sebab: ${cicit.causeOfDeath}</p>` : ''}
                                     ${cicit.notes ? `<p class="text-[10px] text-purple-800 italic mt-0.5"><i class="fa-solid fa-scale-balanced mr-1"></i>${cicit.notes}</p>` : ''}
                                 </div>
-                                <button onclick="deleteMember('${cicit.id}', 'CICIT')" class="text-slate-400 hover:text-rose-600 p-1" title="Padam cicit">
-                                    <i class="fa-solid fa-trash text-xs"></i>
-                                </button>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="openEditMemberModal('${cicit.id}')" class="text-slate-400 hover:text-emerald-600 p-1" title="Kemaskini cicit">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                    </button>
+                                    <button onclick="deleteMember('${cicit.id}', 'CICIT')" class="text-slate-400 hover:text-rose-600 p-1" title="Padam cicit">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -1044,9 +1091,13 @@
                             <span class="font-mono text-[11px] font-black text-blue-700">${cucu.code || ''}</span>
                             <h5 class="font-bold text-sm text-slate-900">${cucu.name}</h5>
                             <p class="text-[11px] text-slate-500">Lahir: ${cucu.dob || '—'} ${cucu.dod ? `| Dod: ${cucu.dod}` : ''}</p>
+                            ${cucu.causeOfDeath ? `<p class="text-[10px] text-rose-700 mt-0.5">Sebab Kematian: ${cucu.causeOfDeath}</p>` : ''}
                         </div>
                         <div class="flex items-center gap-1">
                             ${statusTag}
+                            <button onclick="openEditMemberModal('${cucu.id}')" class="text-slate-400 hover:text-emerald-600 p-1 opacity-80 group-hover:opacity-100" title="Edit cucu">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            </button>
                             <button onclick="deleteMember('${cucu.id}', 'CUCU')" class="text-slate-400 hover:text-rose-600 p-1 opacity-80 group-hover:opacity-100" title="Padam cucu">
                                 <i class="fa-solid fa-trash text-xs"></i>
                             </button>
@@ -1069,13 +1120,13 @@
                 if (filterBranch === 'ALL' || anak.branch.toString() === filterBranch) {
                     allMembers.push({ ...anak, role: 'Anak', codeDisplay: anak.code });
                     if (anak.spouse) {
-                        allMembers.push({ ...anak.spouse, role: 'Anak Menantu', branch: anak.branch, codeDisplay: anak.spouse.code });
+                        allMembers.push({ ...anak.spouse, id: anak.spouse.id || (anak.id + '_spouse'), role: 'Anak Menantu', branch: anak.branch, codeDisplay: anak.spouse.code });
                     }
 
                     anak.children.forEach(cucu => {
                         allMembers.push({ ...cucu, role: 'Cucu', branch: anak.branch, codeDisplay: cucu.code });
                         if (cucu.spouse) {
-                            allMembers.push({ ...cucu.spouse, role: 'Cucu Menantu', branch: anak.branch, codeDisplay: cucu.spouse.code });
+                            allMembers.push({ ...cucu.spouse, id: cucu.spouse.id || (cucu.id + '_spouse'), role: 'Cucu Menantu', branch: anak.branch, codeDisplay: cucu.spouse.code });
                         }
 
                         if (cucu.children) {
@@ -1115,11 +1166,15 @@
                         </div>
                         <h4 class="font-bold text-slate-900 text-sm">${member.name}</h4>
                         <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-cake-candles mr-1 text-slate-400"></i> ${member.dob || '—'}</p>
+                        ${member.status === 'Meninggal Dunia' ? `<p class="text-xs text-rose-600 mt-0.5 font-bold"><i class="fa-solid fa-ribbon mr-1"></i> Meninggal: ${member.dod || '—'}</p>` : ''}
                         ${member.marriageDate ? `<p class="text-xs text-rose-600 mt-0.5 font-medium"><i class="fa-solid fa-ring mr-1"></i> Nikah: ${member.marriageDate}</p>` : ''}
                         ${member.notes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mt-2 border border-slate-100 line-clamp-2">${member.notes}</p>` : ''}
                     </div>
-                    <div class="text-right pt-2 border-t border-slate-100">
-                        <span class="text-xs text-emerald-600 font-bold hover:underline">Lihat Butiran <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    <div class="text-right pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <button onclick="event.stopPropagation(); openEditMemberModal('${member.id}')" class="text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square"></i> Kemaskini
+                        </button>
+                        <span class="text-xs text-emerald-600 font-bold hover:underline">Butiran <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
                     </div>
                 `;
 
@@ -1219,16 +1274,90 @@
             });
         }
 
+        // Search helper function to locate member by ID across tree
+        function findMemberById(id) {
+            for (let anak of familyTreeData) {
+                if (anak.id === id) return { item: anak, level: 'ANAK' };
+                if (anak.spouse && (anak.spouse.id === id || id === anak.id + '_spouse')) {
+                    if (!anak.spouse.id) anak.spouse.id = anak.id + '_spouse';
+                    return { item: anak.spouse, level: 'PASANGAN_ANAK' };
+                }
+
+                for (let cucu of anak.children) {
+                    if (cucu.id === id) return { item: cucu, level: 'CUCU' };
+                    if (cucu.spouse && (cucu.spouse.id === id || id === cucu.id + '_spouse')) {
+                        if (!cucu.spouse.id) cucu.spouse.id = cucu.id + '_spouse';
+                        return { item: cucu.spouse, level: 'PASANGAN_CUCU' };
+                    }
+
+                    if (cucu.children) {
+                        for (let cicit of cucu.children) {
+                            if (cicit.id === id) return { item: cicit, level: 'CICIT' };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         function openAddMemberModal(presetLevel = 'CUCU', parentId = '') {
             document.getElementById('formTitle').innerText = "Tambah Ahli Keluarga Baru";
             document.getElementById('memberForm').reset();
             document.getElementById('editTargetId').value = '';
 
+            document.getElementById('levelSelectContainer').classList.remove('hidden');
+            document.getElementById('parentSelectContainer').classList.remove('hidden');
+
             const levelSelect = document.getElementById('formTargetLevel');
             levelSelect.value = presetLevel;
 
             updateFormParentOptions(parentId);
+            toggleDeathFields();
             document.getElementById('addMemberModal').classList.remove('hidden');
+        }
+
+        function openEditMemberModal(id) {
+            const match = findMemberById(id);
+            if (!match) {
+                showToast("Ahli tidak dijumpai.");
+                return;
+            }
+
+            const m = match.item;
+
+            document.getElementById('formTitle').innerText = `Kemaskini: ${m.name}`;
+            document.getElementById('editTargetId').value = id;
+
+            // Hide generation parent selectors during editing
+            document.getElementById('levelSelectContainer').classList.add('hidden');
+            document.getElementById('parentSelectContainer').classList.add('hidden');
+
+            document.getElementById('formName').value = m.name || '';
+            document.getElementById('formCode').value = m.code || m.codeDisplay || '';
+            document.getElementById('formDob').value = m.dob || '';
+            document.getElementById('formStatus').value = m.status || 'Bujang';
+            document.getElementById('formMarriageDate').value = m.marriageDate || '';
+            document.getElementById('formDod').value = m.dod || '';
+            document.getElementById('formCauseOfDeath').value = m.causeOfDeath || '';
+            document.getElementById('formNotes').value = m.notes || '';
+
+            toggleDeathFields();
+
+            if (!document.getElementById('detailModal').classList.contains('hidden')) {
+                closeModal('detailModal');
+            }
+
+            document.getElementById('addMemberModal').classList.remove('hidden');
+        }
+
+        function toggleDeathFields() {
+            const status = document.getElementById('formStatus').value;
+            const deathContainer = document.getElementById('deathCauseContainer');
+            if (status === 'Meninggal Dunia') {
+                deathContainer.style.opacity = '1';
+            } else {
+                deathContainer.style.opacity = '0.8';
+            }
         }
 
         function updateFormParentOptions(selectedParentId = '') {
@@ -1263,81 +1392,115 @@
         function handleFormSubmit(e) {
             e.preventDefault();
 
-            const level = document.getElementById('formTargetLevel').value;
-            const parentId = document.getElementById('formParentSelect').value;
+            const editId = document.getElementById('editTargetId').value;
             const name = document.getElementById('formName').value.trim();
             const code = document.getElementById('formCode').value.trim();
             const dob = document.getElementById('formDob').value.trim();
             const status = document.getElementById('formStatus').value;
             const marriageDate = document.getElementById('formMarriageDate').value.trim();
             const dod = document.getElementById('formDod').value.trim();
+            const causeOfDeath = document.getElementById('formCauseOfDeath').value.trim();
             const notes = document.getElementById('formNotes').value.trim();
 
-            const newId = "id_" + Date.now();
+            if (editId) {
+                // EDIT MODE
+                const match = findMemberById(editId);
+                if (match) {
+                    let m = match.item;
+                    m.name = name;
+                    m.code = code;
+                    m.dob = dob;
+                    m.status = status;
+                    if (marriageDate) m.marriageDate = marriageDate;
+                    if (dod) m.dod = dod;
+                    if (causeOfDeath) m.causeOfDeath = causeOfDeath;
+                    m.notes = notes;
 
-            if (level === 'CUCU') {
-                const targetAnak = familyTreeData.find(a => a.id === parentId);
-                if (targetAnak) {
-                    targetAnak.children.push({
-                        id: newId,
-                        code: code || `(${targetAnak.children.length + 1})`,
-                        name: name,
-                        dob: dob,
-                        status: status,
-                        notes: notes,
-                        children: []
-                    });
+                    showToast(`Maklumat ${name} berjaya dikemaskini!`);
                 }
-            } else if (level === 'CICIT') {
-                for (let anak of familyTreeData) {
-                    let targetCucu = anak.children.find(c => c.id === parentId);
-                    if (targetCucu) {
-                        if (!targetCucu.children) targetCucu.children = [];
-                        targetCucu.children.push({
+            } else {
+                // ADD MODE
+                const level = document.getElementById('formTargetLevel').value;
+                const parentId = document.getElementById('formParentSelect').value;
+                const newId = "id_" + Date.now();
+
+                if (level === 'CUCU') {
+                    const targetAnak = familyTreeData.find(a => a.id === parentId);
+                    if (targetAnak) {
+                        targetAnak.children.push({
                             id: newId,
-                            code: code || `[${targetCucu.children.length + 1}]`,
+                            code: code || `(${targetAnak.children.length + 1})`,
                             name: name,
                             dob: dob,
                             status: status,
-                            notes: notes
+                            marriageDate: marriageDate,
+                            dod: dod,
+                            causeOfDeath: causeOfDeath,
+                            notes: notes,
+                            children: []
                         });
-                        break;
+                    }
+                } else if (level === 'CICIT') {
+                    for (let anak of familyTreeData) {
+                        let targetCucu = anak.children.find(c => c.id === parentId);
+                        if (targetCucu) {
+                            if (!targetCucu.children) targetCucu.children = [];
+                            targetCucu.children.push({
+                                id: newId,
+                                code: code || `[${targetCucu.children.length + 1}]`,
+                                name: name,
+                                dob: dob,
+                                status: status,
+                                marriageDate: marriageDate,
+                                dod: dod,
+                                causeOfDeath: causeOfDeath,
+                                notes: notes
+                            });
+                            break;
+                        }
+                    }
+                } else if (level === 'PASANGAN') {
+                    const targetAnak = familyTreeData.find(a => a.id === parentId);
+                    if (targetAnak) {
+                        targetAnak.spouse = {
+                            id: newId,
+                            code: code || `(${targetAnak.branch}-S)`,
+                            name: name,
+                            dob: dob,
+                            status: status,
+                            marriageDate: marriageDate,
+                            dod: dod,
+                            causeOfDeath: causeOfDeath
+                        };
                     }
                 }
-            } else if (level === 'PASANGAN') {
-                const targetAnak = familyTreeData.find(a => a.id === parentId);
-                if (targetAnak) {
-                    targetAnak.spouse = {
-                        code: code || `(${targetAnak.branch}-S)`,
-                        name: name,
-                        dob: dob,
-                        marriageDate: marriageDate
-                    };
-                }
+
+                showToast(`Berjaya menambah ${name}!`);
             }
 
             refreshAllViews();
             closeModal('addMemberModal');
-            showToast("Berjaya menambah ahli keluarga baru!");
         }
 
         function deleteMember(id, level) {
-            if (level === 'CUCU') {
-                familyTreeData.forEach(anak => {
-                    anak.children = anak.children.filter(c => c.id !== id);
-                });
-            } else if (level === 'CICIT') {
-                familyTreeData.forEach(anak => {
-                    anak.children.forEach(cucu => {
-                        if (cucu.children) {
-                            cucu.children = cucu.children.filter(cc => cc.id !== id);
-                        }
+            if (confirm("Adakah anda pasti untuk memadam ahli keluarga ini?")) {
+                if (level === 'CUCU') {
+                    familyTreeData.forEach(anak => {
+                        anak.children = anak.children.filter(c => c.id !== id);
                     });
-                });
-            }
+                } else if (level === 'CICIT') {
+                    familyTreeData.forEach(anak => {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) {
+                                cucu.children = cucu.children.filter(cc => cc.id !== id);
+                            }
+                        });
+                    });
+                }
 
-            refreshAllViews();
-            showToast("Ahli keluarga telah dipadam.");
+                refreshAllViews();
+                showToast("Ahli keluarga telah dipadam.");
+            }
         }
 
         function exportDataJSON() {
@@ -1390,13 +1553,16 @@
                         <p><strong class="text-slate-900">Tarikh Lahir:</strong> ${member.dob || 'Tiada rekod'}</p>
                         ${member.status ? `<p><strong class="text-slate-900">Status / Taraf:</strong> ${member.status}</p>` : ''}
                         ${member.dod ? `<p class="text-rose-700"><strong class="text-slate-900">Tarikh Meninggal:</strong> ${member.dod}</p>` : ''}
-                        ${member.causeOfDeath ? `<p><strong class="text-slate-900">Sebab Kematian:</strong> ${member.causeOfDeath}</p>` : ''}
+                        ${member.causeOfDeath ? `<p class="text-rose-800"><strong class="text-slate-900">Sebab Kematian:</strong> ${member.causeOfDeath}</p>` : ''}
                         ${member.marriageDate ? `<p class="text-rose-600"><strong class="text-slate-900">Tarikh Nikah:</strong> ${member.marriageDate}</p>` : ''}
                         ${member.notes ? `<p class="pt-2 border-t border-slate-200 text-amber-900 font-semibold"><i class="fa-solid fa-circle-info mr-1"></i>${member.notes}</p>` : ''}
                     </div>
 
-                    <div class="pt-2">
-                        <button onclick="closeModal('detailModal')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition shadow-sm">
+                    <div class="pt-2 flex items-center gap-2">
+                        <button onclick="openEditMemberModal('${member.id}')" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-pen-to-square"></i> Kemaskini Maklumat
+                        </button>
+                        <button onclick="closeModal('detailModal')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition">
                             Tutup
                         </button>
                     </div>
@@ -1486,7 +1652,7 @@
                                 <td>${anak.name} ${anak.title ? '(' + anak.title + ')' : ''}</td>
                                 <td>${anak.dob || '—'}</td>
                                 <td>—</td>
-                                <td>${anak.status} ${anak.dod ? '| Meninggal: ' + anak.dod : ''} ${anak.notes ? '(' + anak.notes + ')' : ''}</td>
+                                <td>${anak.status} ${anak.dod ? '| Meninggal: ' + anak.dod : ''} ${anak.causeOfDeath ? '(' + anak.causeOfDeath + ')' : ''}</td>
                             </tr>
                 `;
 
@@ -1498,7 +1664,7 @@
                             <td>${anak.spouse.name}</td>
                             <td>${anak.spouse.dob || '—'}</td>
                             <td>${anak.spouse.marriageDate || '—'}</td>
-                            <td>${anak.spouse.dod ? 'Meninggal: ' + anak.spouse.dod : '—'}</td>
+                            <td>${anak.spouse.dod ? 'Meninggal: ' + anak.spouse.dod : '—'} ${anak.spouse.causeOfDeath ? '(' + anak.spouse.causeOfDeath + ')' : ''}</td>
                         </tr>
                     `;
                 }
@@ -1511,7 +1677,7 @@
                             <td><strong>${cucu.name}</strong></td>
                             <td>${cucu.dob || '—'}</td>
                             <td>${cucu.spouse ? (cucu.spouse.marriageDate || '—') : '—'}</td>
-                            <td>${cucu.status} ${cucu.notes ? '[' + cucu.notes + ']' : ''}</td>
+                            <td>${cucu.status} ${cucu.dod ? '| Meninggal: ' + cucu.dod : ''} ${cucu.notes ? '[' + cucu.notes + ']' : ''}</td>
                         </tr>
                     `;
 
@@ -1574,23 +1740,23 @@
             closeModal('exportModal');
 
             let csvRows = [];
-            csvRows.push(["Cabang", "Generasi/Peranan", "Kod Rujukan", "Nama Penuh", "Tarikh Lahir", "Tarikh Nikah", "Status", "Catatan / Nota"]);
+            csvRows.push(["Cabang", "Generasi/Peranan", "Kod Rujukan", "Nama Penuh", "Tarikh Lahir", "Tarikh Nikah", "Status", "Tarikh Meninggal", "Sebab Kematian", "Catatan / Nota"]);
 
             familyTreeData.forEach(anak => {
-                csvRows.push([anak.branch, "Anak", anak.code, anak.name, anak.dob || "", "", anak.status, anak.notes || ""]);
+                csvRows.push([anak.branch, "Anak", anak.code, anak.name, anak.dob || "", "", anak.status, anak.dod || "", anak.causeOfDeath || "", anak.notes || ""]);
                 if (anak.spouse) {
-                    csvRows.push([anak.branch, "Anak Menantu", anak.spouse.code || "", anak.spouse.name, anak.spouse.dob || "", anak.spouse.marriageDate || "", "", ""]);
+                    csvRows.push([anak.branch, "Anak Menantu", anak.spouse.code || "", anak.spouse.name, anak.spouse.dob || "", anak.spouse.marriageDate || "", anak.spouse.status || "", anak.spouse.dod || "", anak.spouse.causeOfDeath || "", ""]);
                 }
 
                 anak.children.forEach(cucu => {
-                    csvRows.push([anak.branch, "Cucu", cucu.code || "", cucu.name, cucu.dob || "", "", cucu.status, cucu.notes || ""]);
+                    csvRows.push([anak.branch, "Cucu", cucu.code || "", cucu.name, cucu.dob || "", "", cucu.status, cucu.dod || "", cucu.causeOfDeath || "", cucu.notes || ""]);
                     if (cucu.spouse) {
-                        csvRows.push([anak.branch, "Cucu Menantu", cucu.spouse.code || "", cucu.spouse.name, cucu.spouse.dob || "", cucu.spouse.marriageDate || "", "", ""]);
+                        csvRows.push([anak.branch, "Cucu Menantu", cucu.spouse.code || "", cucu.spouse.name, cucu.spouse.dob || "", cucu.spouse.marriageDate || "", cucu.spouse.status || "", cucu.spouse.dod || "", cucu.spouse.causeOfDeath || "", ""]);
                     }
 
                     if (cucu.children) {
                         cucu.children.forEach(cicit => {
-                            csvRows.push([anak.branch, "Cicit", cicit.code || "", cicit.name, cicit.dob || "", "", cicit.status, cicit.notes || ""]);
+                            csvRows.push([anak.branch, "Cicit", cicit.code || "", cicit.name, cicit.dob || "", "", cicit.status, cicit.dod || "", cicit.causeOfDeath || "", cicit.notes || ""]);
                         });
                     }
                 });
