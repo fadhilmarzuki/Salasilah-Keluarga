@@ -1393,6 +1393,17 @@
             e.preventDefault();
 
             const editId = document.getElementById('editTargetId').value;
+            const isEdit = Boolean(editId);
+
+            // Pop-up Pengesahan Perubahan Maklumat
+            const confirmMessage = isEdit 
+                ? "Adakah anda pasti ingin mengubah maklumat ahli keluarga ini?" 
+                : "Adakah anda pasti ingin menambah maklumat ahli keluarga baru ini?";
+
+            if (!confirm(confirmMessage)) {
+                return; // Batalkan jika pengguna klik 'Cancel'
+            }
+
             const name = document.getElementById('formName').value.trim();
             const code = document.getElementById('formCode').value.trim();
             const dob = document.getElementById('formDob').value.trim();
@@ -1483,24 +1494,27 @@
         }
 
         function deleteMember(id, level) {
-            if (confirm("Adakah anda pasti untuk memadam ahli keluarga ini?")) {
-                if (level === 'CUCU') {
-                    familyTreeData.forEach(anak => {
-                        anak.children = anak.children.filter(c => c.id !== id);
-                    });
-                } else if (level === 'CICIT') {
-                    familyTreeData.forEach(anak => {
-                        anak.children.forEach(cucu => {
-                            if (cucu.children) {
-                                cucu.children = cucu.children.filter(cc => cc.id !== id);
-                            }
-                        });
-                    });
-                }
-
-                refreshAllViews();
-                showToast("Ahli keluarga telah dipadam.");
+            // Pop-up Pengesahan Sebelum Memadam Data
+            if (!confirm("Adakah anda pasti ingin mengubah maklumat dengan MEMADAM ahli keluarga ini?")) {
+                return; // Batalkan pemadaman jika pengguna pilih Cancel
             }
+
+            if (level === 'CUCU') {
+                familyTreeData.forEach(anak => {
+                    anak.children = anak.children.filter(c => c.id !== id);
+                });
+            } else if (level === 'CICIT') {
+                familyTreeData.forEach(anak => {
+                    anak.children.forEach(cucu => {
+                        if (cucu.children) {
+                            cucu.children = cucu.children.filter(cc => cc.id !== id);
+                        }
+                    });
+                });
+            }
+
+            refreshAllViews();
+            showToast("Ahli keluarga telah dipadam.");
         }
 
         function exportDataJSON() {
@@ -1515,6 +1529,15 @@
         }
 
         function importDataJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Pop-up Pengesahan Sebelum Muat Naik / Timpa Data Baru
+            if (!confirm("Adakah anda pasti ingin mengubah maklumat salasilah dengan memuat naik fail data baru ini?")) {
+                event.target.value = ''; // Reset input fail jika dibatalkan
+                return;
+            }
+
             const fileReader = new FileReader();
             fileReader.onload = function() {
                 try {
@@ -1530,7 +1553,7 @@
                     showToast("Gagal membaca fail JSON.");
                 }
             };
-            fileReader.readAsText(event.target.files[0]);
+            fileReader.readAsText(file);
         }
 
         function showDetailModal(member) {
