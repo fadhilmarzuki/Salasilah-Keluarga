@@ -360,20 +360,32 @@
                 </p>
                 <textarea id="appsScriptCodeBlock" readonly rows="5" class="w-full p-2.5 bg-slate-900 text-teal-300 font-mono text-[10px] rounded-xl focus:outline-none select-all">
 function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getRange(1, 1).getValue();
-  if (!data) return ContentService.createTextOutput(JSON.stringify({ status: "success", data: [] })).setMimeType(ContentService.MimeType.JSON);
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", data: JSON.parse(data) })).setMimeType(ContentService.MimeType.JSON);
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = sheet.getRange(1, 1).getValue();
+    if (!data || data === "") {
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", data: [] })).setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", data: JSON.parse(data) })).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 function doPost(e) {
   try {
-    var contents = JSON.parse(e.postData.contents);
-    if (contents.action === "saveData" && contents.data) {
+    var contents;
+    if (e && e.postData && e.postData.contents) {
+      contents = JSON.parse(e.postData.contents);
+    } else if (e && e.parameter && e.parameter.data) {
+      contents = JSON.parse(e.parameter.data);
+    }
+    if (contents && contents.data) {
       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
       sheet.getRange(1, 1).setValue(JSON.stringify(contents.data));
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Tiada data dihantar" })).setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
@@ -925,15 +937,21 @@ function doPost(e) {
             try {
                 const res = await fetch(googleScriptUrl + '?action=getData');
                 const result = await res.json();
-                if (result.status === 'success' && result.data && result.data.length > 0) {
-                    familyTreeData = result.data;
-                    localStorage.setItem('family_tree_local_data', JSON.stringify(familyTreeData));
-                    showToast("Data salasilah terkini dimuat turun dari Google Sheets!");
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    if (result.data.length > 0) {
+                        familyTreeData = result.data;
+                        localStorage.setItem('family_tree_local_data', JSON.stringify(familyTreeData));
+                        showToast("Data salasilah terkini dimuat turun dari Google Sheets!");
+                    } else {
+                        // Sheet A1 is empty: auto-initialize sheet with initial data
+                        showToast("Google Sheet masih kosong. Menyinkronkan data awal ke Google Sheet...");
+                        await saveDataToCloudOrLocal();
+                    }
                 } else {
                     fallbackToLocal("Respons Google Sheets tidak mengandungi data sah.");
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch Google Sheet Error:", err);
                 fallbackToLocal("Gagal menghubungkan ke Google Sheets API. Menggunakan data tersimpan tempatan.");
             } finally {
                 hideLoadingBanner();
@@ -953,14 +971,16 @@ function doPost(e) {
             if (googleScriptUrl) {
                 showLoadingBanner("Menyimpan & mengemas kini Google Sheets...");
                 try {
+                    // Use text/plain with no-cors to prevent browser CORS preflight (OPTIONS) blocking
                     await fetch(googleScriptUrl, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({ action: 'saveData', data: familyTreeData })
                     });
                     showToast("Kemaskini berjaya dihantar ke Google Sheets!");
                 } catch (err) {
+                    console.error("Save Google Sheet Error:", err);
                     showToast("Gagal menyimpan ke Google Sheets, data disimpan secara Tempatan.");
                 } finally {
                     hideLoadingBanner();
