@@ -63,8 +63,74 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased relative">
 
+    <!-- Modal Password Authentication Lock Screen -->
+    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-fade-in">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-slate-900">Kawalan Keselamatan</h2>
+                <p class="text-xs text-slate-500 mt-1">Sila masukkan kata laluan untuk mengakses pangkalan data keluarga.</p>
+            </div>
+
+            <form onsubmit="verifyPassword(event)" class="space-y-4">
+                <div>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="password" id="passwordInput" placeholder="TL996 (Ahli) / ADMINTL996 (Admin)" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="togglePassIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <p id="authErrorMsg" class="text-rose-600 font-bold text-xs mt-2 hidden flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation"></i> Kata laluan salah. Sila cuba lagi!
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-lock-open"></i> Log Masuk
+                </button>
+            </form>
+            
+            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-left text-[11px] text-slate-500 space-y-1">
+                <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-amber-500 mr-1"></i> Jenis Akses:</p>
+                <p>• <b>Ahli Keluarga:</b> Kata laluan <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">TL996</code></p>
+                <p>• <b>Pentadbir (Admin):</b> Kata laluan <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">ADMINTL996</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Unlock Admin Access (When clicked from inside app) -->
+    <div id="adminAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-slate-100 text-center space-y-4">
+            <button onclick="closeModal('adminAuthModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Akses ADMINISTRATIVE</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Sila masukkan kata laluan Pentadbir untuk membuka tetapan API &amp; JSON.</p>
+            </div>
+
+            <form onsubmit="verifyAdminPassword(event)" class="space-y-3">
+                <input type="password" id="adminPasswordInput" placeholder="ADMINTL996" required class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
+                <p id="adminAuthError" class="text-rose-600 font-bold text-xs hidden flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-circle-exclamation"></i> Kata laluan Admin salah!
+                </p>
+                <button type="submit" class="w-full py-2.5 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-xl transition text-xs shadow-sm">
+                    Buka Pentadbiran
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
     <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-900 text-white shadow-lg sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex items-center space-x-3.5">
@@ -72,30 +138,37 @@
                     <i class="fa-solid fa-sitemap text-amber-300 text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Carta Salasilah Interaktif</h1>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Carta Salasilah Interaktif</h1>
+                        <span id="roleBadge" class="bg-amber-400 text-amber-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                            Ahli Keluarga
+                        </span>
+                        <span id="syncBadge" class="bg-emerald-900/80 border border-emerald-400/40 text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <i class="fa-solid fa-database text-amber-300"></i> Local
+                        </span>
+                    </div>
                     <p class="text-xs sm:text-sm text-emerald-200">Keturunan Hj. Abdullah bin Hj. Ahmad & Hjh. Salbiah binti Jab</p>
                 </div>
             </div>
             
-            <!-- Management & Export/Import Controls -->
+            <!-- Management & Access Controls -->
             <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
-                <button onclick="openAddMemberModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-user-plus text-sm"></i>
+                <button onclick="accessAdminPanel()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>ADMINISTRATIVE</span>
+                </button>
+                <button onclick="openAddMemberModal()" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-user-plus text-amber-300"></i>
                     <span>Tambah Ahli</span>
                 </button>
                 <button onclick="openExportModal()" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm" title="Muat Turun & Cetak Laporan PDF / CSV">
                     <i class="fa-solid fa-file-pdf text-red-700"></i>
-                    <span>Cetak / PDF Senarai</span>
+                    <span>Cetak / PDF</span>
                 </button>
-                <button onclick="exportDataJSON()" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Simpan data ke fail .json">
-                    <i class="fa-solid fa-download text-amber-300"></i>
-                    <span>Simpan Data</span>
+                <button onclick="lockSystem()" class="bg-rose-900/80 hover:bg-rose-800 border border-rose-400/40 text-rose-200 px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Kunci Laman Keselamatan">
+                    <i class="fa-solid fa-lock text-amber-300"></i>
+                    <span>Kunci</span>
                 </button>
-                <label class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer" title="Muat naik fail .json">
-                    <i class="fa-solid fa-upload text-blue-300"></i>
-                    <span>Muat Naik</span>
-                    <input type="file" id="jsonFileInput" accept=".json" onchange="importDataJSON(event)" class="hidden">
-                </label>
             </div>
         </div>
     </header>
@@ -146,6 +219,14 @@
 
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-1 w-full">
 
+        <!-- Sync Indicator Banner -->
+        <div id="loadingBanner" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs px-4 py-2.5 rounded-2xl mb-4 flex items-center justify-between animate-fade-in">
+            <span class="flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-spinner fa-spin text-emerald-600 text-sm"></i>
+                <span id="loadingBannerText">Menghubungkan ke Google Sheets API...</span>
+            </span>
+        </div>
+
         <!-- Custom Notification Toast -->
         <div id="toastMessage" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs border border-slate-700 animate-fade-in">
             <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
@@ -163,15 +244,15 @@
                 
                 <div class="mt-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs">
                     <div class="bg-white/90 backdrop-blur px-4 py-2.5 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
-                        <p class="font-extrabold text-amber-950 text-sm">Haji Abdullah bin Haji Ahmad</p>
-                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">02-04-1927 — 03-08-2010 (83 Tahun)</p>
+                        <p class="font-extrabold text-amber-950 text-sm">Haji Abdullah bin Haji Ahmad <span class="text-xs text-rose-700 font-bold ml-1">(83 tahun - meninggal)</span></p>
+                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">02-04-1927 — 03-08-2010</p>
                     </div>
                     <div class="w-7 h-7 rounded-full bg-amber-200/80 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
-                        &
+                        &amp;
                     </div>
                     <div class="bg-white/90 backdrop-blur px-4 py-2.5 rounded-2xl border border-amber-200 w-full sm:w-auto shadow-sm">
-                        <p class="font-extrabold text-amber-950 text-sm">Hajjah Salbiah binti Jab</p>
-                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">xx-xx-1937 — 12-06-2018 (81 Tahun)</p>
+                        <p class="font-extrabold text-amber-950 text-sm">Hajjah Salbiah binti Jab <span class="text-xs text-rose-700 font-bold ml-1">(81 tahun - meninggal)</span></p>
+                        <p class="text-[11px] text-amber-700 font-medium mt-0.5">xx-xx-1937 — 12-06-2018</p>
                     </div>
                 </div>
             </div>
@@ -212,6 +293,112 @@
 
     </main>
 
+    <!-- Modal ADMINISTRATIVE (Admin Panel) -->
+    <div id="adminPanelModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative border border-slate-100 space-y-5 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('adminPanelModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="border-b border-slate-100 pb-3 flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-lg font-black shadow-inner">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                        <span>Panel ADMINISTRATIVE</span>
+                        <span class="bg-rose-100 text-rose-800 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase">ADMIN</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">Kawalan pangkalan data Google Sheets API, Muat Naik / Muat Turun fail JSON, dan tetapan sistem.</p>
+                </div>
+            </div>
+
+            <!-- Section 1: Google Sheets API Config -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                <h4 class="text-xs font-extrabold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-table text-emerald-600"></i>
+                    <span>Tetapan Google Sheets API (Google Apps Script)</span>
+                </h4>
+                
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Google Apps Script Web App URL</label>
+                    <input type="text" id="googleScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-[11px]">
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="clearApiUrl()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl transition text-xs">
+                        Guna Local Storage Sahaja
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="fetchFromGoogleSheet()" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition text-xs shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Muat Turun dari Sheet
+                        </button>
+                        <button type="button" onclick="saveApiUrl()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition text-xs shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan URL API
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Backup & Restore JSON -->
+            <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 space-y-3">
+                <h4 class="text-xs font-extrabold text-amber-950 flex items-center gap-2">
+                    <i class="fa-solid fa-file-code text-amber-600"></i>
+                    <span>Pengurusan Fail Data JSON</span>
+                </h4>
+                <p class="text-[11px] text-amber-900">Gunakan fungsi ini untuk memuat turun salinan sandaran (backup) atau memuat naik data keluarga baharu dari fail JSON.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <button onclick="exportDataJSON()" class="p-3 bg-white hover:bg-amber-100/50 border border-amber-300 rounded-xl transition flex items-center gap-3 text-left shadow-sm">
+                        <div class="w-9 h-9 bg-amber-500 text-slate-950 rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-extrabold text-slate-900 text-xs">Simpan Fail JSON</h5>
+                            <p class="text-[10px] text-slate-500">Muat turun .json salasilah terkini</p>
+                        </div>
+                    </button>
+
+                    <label class="p-3 bg-white hover:bg-blue-50 border border-blue-200 rounded-xl transition flex items-center gap-3 text-left shadow-sm cursor-pointer">
+                        <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
+                            <i class="fa-solid fa-upload"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-extrabold text-slate-900 text-xs">Muat Naik Fail JSON</h5>
+                            <p class="text-[10px] text-slate-500">Ganti data menggunakan fail .json</p>
+                        </div>
+                        <input type="file" id="jsonFileInput" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section 3: Diagnostic Info -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs space-y-1.5">
+                <p class="font-bold text-slate-800"><i class="fa-solid fa-database mr-1 text-slate-500"></i> Ringkasan Storan Data:</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-slate-600 pt-1">
+                    <div class="bg-white p-2 rounded-lg border border-slate-200">
+                        <span class="block text-slate-400">Jumlah Rekod Anak:</span>
+                        <strong class="text-slate-800 text-sm" id="adminAnakCount">9</strong>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg border border-slate-200">
+                        <span class="block text-slate-400">Status Penyuntingan:</span>
+                        <strong class="text-emerald-700 text-sm">Aktif</strong>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg border border-slate-200 col-span-2 sm:col-span-1">
+                        <span class="block text-slate-400">Akses Semasa:</span>
+                        <strong class="text-amber-800 text-sm">PENTADBIR (ADMIN)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 text-right border-t border-slate-100">
+                <button onclick="closeModal('adminPanelModal')" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition text-xs">
+                    Tutup Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal 1: Detail & Action Modal -->
     <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-100">
@@ -232,7 +419,7 @@
             <div class="border-b border-slate-100 pb-3">
                 <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-file-invoice text-emerald-600"></i>
-                    <span>Muat Turun & Cetak Senarai Terkini</span>
+                    <span>Muat Turun &amp; Cetak Senarai Terkini</span>
                 </h3>
                 <p class="text-xs text-slate-500 mt-0.5">Pilih format laporan yang anda ingin hasilkan daripada data salasilah terkini.</p>
             </div>
@@ -244,7 +431,7 @@
                     </div>
                     <div>
                         <h4 class="font-extrabold text-slate-900 text-xs">Cetak / Simpan Sebagai PDF (Format Laporan)</h4>
-                        <p class="text-[11px] text-slate-600 mt-0.5">Menjana cetakan berformat rasmi mengikut jadual cabang anak 1-9. Boleh terus disimpan sebagai fail PDF.</p>
+                        <p class="text-[11px] text-slate-600 mt-0.5">Menjana cetakan berformat rasmi mengikut jadual cabang anak 1-9 beserta umur ahli. Boleh terus disimpan sebagai PDF.</p>
                     </div>
                 </button>
 
@@ -341,8 +528,8 @@
                 </div>
 
                 <div id="deathCauseContainer">
-                    <label class="block font-bold text-rose-800 mb-1">Sebab Kematian (Jika Meninggal Dunia)</label>
-                    <input type="text" id="formCauseOfDeath" placeholder="Contoh: Komplikasi Diabetes / Sakit tua / Covid19" class="w-full px-3 py-2 bg-rose-50/50 border border-rose-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    <label class="block font-bold text-rose-800 mb-1">Sebab Kematian / Umur Meninggal</label>
+                    <input type="text" id="formCauseOfDeath" placeholder="Contoh: Thyroid glands / Complications due to diabetes" class="w-full px-3 py-2 bg-rose-50/50 border border-rose-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none">
                 </div>
 
                 <div>
@@ -366,442 +553,88 @@
     <footer class="bg-white border-t border-slate-200 mt-12 py-6">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
             <p class="font-bold text-slate-700">Keturunan Haji Abdullah bin Haji Ahmad dan Hajjah Salbiah binti Jab</p>
-            <p>Tarikh versi terbaru dokumen: <span class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-700 font-bold">21/9/2026</span> | Microsoft EXCEL file: <i>family tree (996 tanah liat)</i></p>
-            <p>Kemaskini & Hubungi: Ir. Haji Abd. Rashid bin Haji Hashim (016-318-5990 / achid1963@gmail.com)</p>
+            <p>Tarikh versi terbaru dokumen: <span class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-700 font-bold">2026</span> | Microsoft EXCEL file: <i>family tree (996 tanah liat)</i></p>
+            <p>Kemaskini &amp; Hubungi: Ir. Haji Abd. Rashid bin Haji Hashim (016-318-5990 / achid1963@gmail.com)</p>
         </div>
     </footer>
 
     <script>
-        // Default Family Data
+        // Security Passwords
+        const PASS_FAMILY = "TL996";
+        const PASS_ADMIN = "ADMINTL996";
+
+        // Current User Mode: 'FAMILY' or 'ADMIN'
+        let currentUserRole = 'FAMILY';
+
+        // Default Family Data Fallback
         const defaultFamilyTreeData = [
             {
-                id: "1",
-                code: "(1)",
-                name: "Mohd. Batzid",
-                title: "Pak Long",
-                dob: "24-04-1953",
-                dod: "25-05-2007 (06:30 A.M.)",
-                ageAtDeath: "54 tahun & 1 bulan",
-                causeOfDeath: "Thyroid glands and asthma",
-                status: "Meninggal Dunia",
-                branch: 1,
-                generation: 1,
-                spouse: {
-                    id: "1_spouse",
-                    code: "(1-3)",
-                    name: "Aminah binti Hashim",
-                    dob: "01-02-1959",
-                    dod: "20-12-2021 (09:00 P.M.)",
-                    ageAtDeath: "61 tahun & 10 bulan",
-                    causeOfDeath: "Covid19",
-                    status: "Meninggal Dunia",
-                    marriageDate: "03-11-1990"
-                },
+                id: "1", code: "(1)", name: "Mohd. Batzid", title: "Pak Long", dob: "24-04-1953", dod: "25-05-2007 (06:30 A.M.)", ageAtDeath: "54 tahun & 1 bulan", causeOfDeath: "Thyroid glands and asthma", status: "Meninggal Dunia", branch: 1, generation: 1,
+                spouse: { id: "1_spouse", code: "(1-3)", name: "Aminah binti Hashim", dob: "01-02-1959", dod: "20-12-2021 (09:00 P.M.)", ageAtDeath: "61 tahun & 10 bulan", causeOfDeath: "Covid19", status: "Meninggal Dunia", marriageDate: "03-11-1990" },
                 children: [
-                    {
-                        id: "1-1",
-                        code: "(07) 1)",
-                        name: "Noraini Wahidah",
-                        dob: "16-12-1991",
-                        dod: "23-06-2025",
-                        causeOfDeath: "Complications due to diabetes",
-                        status: "Meninggal Dunia",
-                        spouse: {
-                            id: "1-1_spouse",
-                            code: "(07-04)",
-                            name: "Mohamad Najib bin Mihat",
-                            dob: "18-02-1990",
-                            marriageDate: "24-05-2013"
-                        },
-                        children: [
-                            {
-                                id: "1-1-1",
-                                code: "[20] 21)",
-                                name: "Nur Hana",
-                                dob: "03-08-2025 (19:08)",
-                                notes: "2.50 kg H Kulim",
-                                status: "Bujang"
-                            }
-                        ]
-                    },
-                    {
-                        id: "1-2",
-                        code: "(15) 2)",
-                        name: "Muhammad Ridzhuan",
-                        dob: "10-08-1996",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "1-2_spouse",
-                            code: "(15-12)",
-                            name: "Nurul Ezzati Atiqah binti Ismail",
-                            dob: "24-07-1991",
-                            marriageDate: "18-10-2024"
-                        },
-                        children: []
-                    },
-                    {
-                        id: "1-3",
-                        code: "(18) 3)",
-                        name: "Muhammad Suhaimi",
-                        dob: "17-12-1999",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "1-3_spouse",
-                            code: "(18-10)",
-                            name: "Nur Atikah binti Kamarudin",
-                            dob: "21-01-1999",
-                            marriageDate: "27-04-2024"
-                        },
-                        children: []
-                    },
-                    {
-                        id: "1-4",
-                        code: "(21) 4)",
-                        name: "Mazli",
-                        dob: "03-01-2001",
-                        status: "Bujang",
-                        children: []
-                    }
+                    { id: "1-1", code: "(07) 1)", name: "Noraini Wahidah", dob: "16-12-1991", dod: "23-06-2025", ageAtDeath: "33 tahun", causeOfDeath: "Complications due to diabetes", status: "Meninggal Dunia", spouse: { id: "1-1_spouse", code: "(07-04)", name: "Mohamad Najib bin Mihat", dob: "18-02-1990", marriageDate: "24-05-2013" }, children: [{ id: "1-1-1", code: "[20] 21)", name: "Nur Hana", dob: "03-08-2025 (19:08)", notes: "2.50 kg H Kulim", status: "Bujang" }] },
+                    { id: "1-2", code: "(15) 2)", name: "Muhammad Ridzhuan", dob: "10-08-1996", status: "Bernikah", spouse: { id: "1-2_spouse", code: "(15-12)", name: "Nurul Ezzati Atiqah binti Ismail", dob: "24-07-1991", marriageDate: "18-10-2024" }, children: [] },
+                    { id: "1-3", code: "(18) 3)", name: "Muhammad Suhaimi", dob: "17-12-1999", status: "Bernikah", spouse: { id: "1-3_spouse", code: "(18-10)", name: "Nur Atikah binti Kamarudin", dob: "21-01-1999", marriageDate: "27-04-2024" }, children: [] },
+                    { id: "1-4", code: "(21) 4)", name: "Mazli", dob: "03-01-2001", status: "Bujang", children: [] }
                 ]
             },
             {
-                id: "2",
-                code: "(2)",
-                name: "Hajjah Salmiah",
-                title: "Mak Ngah",
-                dob: "02-04-1955",
-                status: "Bernikah",
-                branch: 2,
-                generation: 1,
-                spouse: {
-                    id: "2_spouse",
-                    code: "(2-1)",
-                    name: "Nik Abdul Kadir bin Hj. Nik Omar",
-                    dob: "09-09-1939",
-                    dod: "05-04-2002",
-                    ageAtDeath: "63 tahun",
-                    causeOfDeath: "Sakit jantung",
-                    status: "Meninggal Dunia",
-                    marriageDate: "23-08-1980"
-                },
+                id: "2", code: "(2)", name: "Hajjah Salmiah", title: "Mak Ngah", dob: "02-04-1955", status: "Bernikah", branch: 2, generation: 1,
+                spouse: { id: "2_spouse", code: "(2-1)", name: "Nik Abdul Kadir bin Hj. Nik Omar", dob: "09-09-1939", dod: "05-04-2002", ageAtDeath: "63 tahun", causeOfDeath: "Sakit jantung", status: "Meninggal Dunia", marriageDate: "23-08-1980" },
                 children: [
-                    {
-                        id: "2-1",
-                        code: "(01) 1)",
-                        name: "Nik Ahmad Kamil",
-                        dob: "09-11-1981",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "2-1_spouse",
-                            code: "(01-02)",
-                            name: "Yuhaniza binti Mohd Yusof",
-                            dob: "22-01-1981",
-                            marriageDate: "08-12-2011"
-                        },
-                        children: [
-                            { id: "2-1-1", code: "[03] 1i)", name: "Nik Aryssa Kamillya", dob: "25-08-2012 (18:41)", notes: "2.72 kg HSbrng Jaya", status: "Bujang" },
-                            { id: "2-1-2", code: "[05] 1ii)", name: "Nik Affiya Kamillya", dob: "23-09-2014 (02:11)", notes: "2.80 kg HSg Petani", status: "Bujang" },
-                            { id: "2-1-3", code: "[09] 1iii)", name: "Nik Azzaiya Kamillya", dob: "05-09-2019 (10:34)", notes: "2.75 kg HSitAbHalim, SgPetani", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "2-2",
-                        code: "(03) 2)",
-                        name: "Nik Kamarul Arifin",
-                        dob: "11-04-1984",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "2-2_spouse",
-                            code: "(03-06)",
-                            name: "Nurazlin binti A Wahab",
-                            dob: "17-05-1985",
-                            marriageDate: "14-09-2014"
-                        },
-                        children: [
-                            { id: "2-2-1", code: "[12] 2i)", name: "Nik Khalaf Affan", dob: "04-02-2021 (11:05)", notes: "2.84 kg HBKota Bharu", status: "Bujang" },
-                            { id: "2-2-2", code: "[14] 2ii)", name: "Nik Khawla Afnan", dob: "27-07-2022 (16:12)", notes: "3.02 kg KBMCKota Bharu", status: "Bujang" },
-                            { id: "2-2-3", code: "[17] 2iii)", name: "Nik Khalaf Alwan", dob: "14-10-2023 (14:09)", notes: "2.74 kg KBMCKota Bharu", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "2-3",
-                        code: "(05) 3)",
-                        name: "Nik Khairul Amir",
-                        dob: "02-09-1986",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "2-3_spouse",
-                            code: "(05-03)",
-                            name: "Nurul Alizan binti Mohd. Ramli",
-                            dob: "29-07-1986",
-                            marriageDate: "01-06-2012"
-                        },
-                        children: [
-                            { id: "2-3-1", code: "[04] 3i)", name: "Nik Qhaleef Rizqi", dob: "21-03-2013 (04:30)", notes: "2.50 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { id: "2-3-2", code: "[08] 3ii)", name: "Nik Qhaseh Nurnrina", dob: "24-12-2015 (04:30)", notes: "3.30 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { id: "2-3-3", code: "[10] 3iii)", name: "Nik Qhaira Ezara", dob: "08-08-2019 (05:11)", notes: "3.00 kg HBTBainun, Ipoh", status: "Bujang" },
-                            { id: "2-3-4", code: "[13] 3iv)", name: "Nik Khalish Ziqri", dob: "30-03-2021 (04:23)", notes: "3.10 kg HBTBainun, Ipoh", status: "Bujang" }
-                        ]
-                    }
+                    { id: "2-1", code: "(01) 1)", name: "Nik Ahmad Kamil", dob: "09-11-1981", status: "Bernikah", spouse: { id: "2-1_spouse", code: "(01-02)", name: "Yuhaniza binti Mohd Yusof", dob: "22-01-1981", marriageDate: "08-12-2011" }, children: [{ id: "2-1-1", code: "[03] 1i)", name: "Nik Aryssa Kamillya", dob: "25-08-2012 (18:41)", notes: "2.72 kg HSbrng Jaya", status: "Bujang" }, { id: "2-1-2", code: "[05] 1ii)", name: "Nik Affiya Kamillya", dob: "23-09-2014 (02:11)", notes: "2.80 kg HSg Petani", status: "Bujang" }, { id: "2-1-3", code: "[09] 1iii)", name: "Nik Azzaiya Kamillya", dob: "05-09-2019 (10:34)", notes: "2.75 kg HSitAbHalim, SgPetani", status: "Bujang" }] },
+                    { id: "2-2", code: "(03) 2)", name: "Nik Kamarul Arifin", dob: "11-04-1984", status: "Bernikah", spouse: { id: "2-2_spouse", code: "(03-06)", name: "Nurazlin binti A Wahab", dob: "17-05-1985", marriageDate: "14-09-2014" }, children: [{ id: "2-2-1", code: "[12] 2i)", name: "Nik Khalaf Affan", dob: "04-02-2021 (11:05)", notes: "2.84 kg HBKota Bharu", status: "Bujang" }, { id: "2-2-2", code: "[14] 2ii)", name: "Nik Khawla Afnan", dob: "27-07-2022 (16:12)", notes: "3.02 kg KBMCKota Bharu", status: "Bujang" }, { id: "2-2-3", code: "[17] 2iii)", name: "Nik Khalaf Alwan", dob: "14-10-2023 (14:09)", notes: "2.74 kg KBMCKota Bharu", status: "Bujang" }] },
+                    { id: "2-3", code: "(05) 3)", name: "Nik Khairul Amir", dob: "02-09-1986", status: "Bernikah", spouse: { id: "2-3_spouse", code: "(05-03)", name: "Nurul Alizan binti Mohd. Ramli", dob: "29-07-1986", marriageDate: "01-06-2012" }, children: [{ id: "2-3-1", code: "[04] 3i)", name: "Nik Qhaleef Rizqi", dob: "21-03-2013 (04:30)", notes: "2.50 kg HBTBainun, Ipoh", status: "Bujang" }, { id: "2-3-2", code: "[08] 3ii)", name: "Nik Qhaseh Nurnrina", dob: "24-12-2015 (04:30)", notes: "3.30 kg HBTBainun, Ipoh", status: "Bujang" }, { id: "2-3-3", code: "[10] 3iii)", name: "Nik Qhaira Ezara", dob: "08-08-2019 (05:11)", notes: "3.00 kg HBTBainun, Ipoh", status: "Bujang" }, { id: "2-3-4", code: "[13] 3iv)", name: "Nik Khalish Ziqri", dob: "30-03-2021 (04:23)", notes: "3.10 kg HBTBainun, Ipoh", status: "Bujang" }] }
                 ]
             },
             {
-                id: "3",
-                code: "(3)",
-                name: "Haji Mohamad Marzuki",
-                title: "Pak Alang",
-                dob: "07-10-1957",
-                status: "Bernikah",
-                branch: 3,
-                generation: 1,
-                spouse: {
-                    id: "3_spouse",
-                    code: "(3-2)",
-                    name: "Hajjah Nor Haryati binti Hashim",
-                    dob: "11-03-1964",
-                    marriageDate: "13-11-1982"
-                },
+                id: "3", code: "(3)", name: "Haji Mohamad Marzuki", title: "Pak Alang", dob: "07-10-1957", status: "Bernikah", branch: 3, generation: 1,
+                spouse: { id: "3_spouse", code: "(3-2)", name: "Hajjah Nor Haryati binti Hashim", dob: "11-03-1964", marriageDate: "13-11-1982" },
                 children: [
-                    {
-                        id: "3-1",
-                        code: "(02) 1)",
-                        name: "Dr. Muhamad Fadhil",
-                        dob: "23-02-1984",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "3-1_spouse",
-                            code: "(02-01)",
-                            name: "Nor Haslina binti Saad",
-                            dob: "13-01-1984",
-                            marriageDate: "06-06-2009"
-                        },
-                        children: [
-                            { id: "3-1-1", code: "[01] 1i)", name: "Muhamad Faiz Hakimi", dob: "09-02-2010", status: "Bujang" },
-                            { id: "3-1-2", code: "[02] 1ii)", name: "Nur Hanis Fasihah", dob: "21-06-2011", status: "Bujang" },
-                            { id: "3-1-3", code: "[07] 1iii)", name: "Muhamad Fawwaz Hamzi", dob: "16-10-2015", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "3-2",
-                        code: "(04) 2)",
-                        name: "Nur Hafizah",
-                        dob: "02-04-1985",
-                        status: "Bujang",
-                        children: []
-                    },
-                    {
-                        id: "3-3",
-                        code: "(06) 3)",
-                        name: "Muhamad Hadri",
-                        dob: "23-11-1989",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "3-3_spouse",
-                            code: "(06-05)",
-                            name: "Siti Haidah binti Mohd Ijam",
-                            dob: "02-09-1988",
-                            marriageDate: "29-08-2014"
-                        },
-                        children: [
-                            { id: "3-3-1", code: "[06] 3i)", name: "Hani Humairah", dob: "12-10-2015", status: "Bujang" },
-                            { id: "3-3-2", code: "[18] 3ii)", name: "Hadid Hafiy", dob: "27-04-2024", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "3-4",
-                        code: "(09) 4)",
-                        name: "Nur Ayuni",
-                        dob: "13-08-1993",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "3-4_spouse",
-                            code: "(09-07)",
-                            name: "Muhammad Fauzan bin Yunus",
-                            dob: "14-03-1988",
-                            marriageDate: "02-02-2019"
-                        },
-                        children: [
-                            { id: "3-4-1", code: "[11] 4i)", name: "Muhammad Adam Fateh", dob: "28-03-2020 (19:55)", notes: "3.02 kg HSitBahiyah, A.Star", status: "Bujang" },
-                            { id: "3-4-2", code: "[19] 4ii)", name: "Muhammad Azam Fathi", dob: "08-10-2024 (10:12)", notes: "2.51 kg HCTM, Cheras", status: "Bujang" }
-                        ]
-                    }
+                    { id: "3-1", code: "(02) 1)", name: "Dr. Muhamad Fadhil", dob: "23-02-1984", status: "Bernikah", spouse: { id: "3-1_spouse", code: "(02-01)", name: "Nor Haslina binti Saad", dob: "13-01-1984", marriageDate: "06-06-2009" }, children: [{ id: "3-1-1", code: "[01] 1i)", name: "Muhamad Faiz Hakimi", dob: "09-02-2010", status: "Bujang" }, { id: "3-1-2", code: "[02] 1ii)", name: "Nur Hanis Fasihah", dob: "21-06-2011", status: "Bujang" }, { id: "3-1-3", code: "[07] 1iii)", name: "Muhamad Fawwaz Hamzi", dob: "16-10-2015", status: "Bujang" }] },
+                    { id: "3-2", code: "(04) 2)", name: "Nur Hafizah", dob: "02-04-1985", status: "Bujang", children: [] },
+                    { id: "3-3", code: "(06) 3)", name: "Muhamad Hadri", dob: "23-11-1989", status: "Bernikah", spouse: { id: "3-3_spouse", code: "(06-05)", name: "Siti Haidah binti Mohd Ijam", dob: "02-09-1988", marriageDate: "29-08-2014" }, children: [{ id: "3-3-1", code: "[06] 3i)", name: "Hani Humairah", dob: "12-10-2015", status: "Bujang" }, { id: "3-3-2", code: "[18] 3ii)", name: "Hadid Hafiy", dob: "27-04-2024", status: "Bujang" }] },
+                    { id: "3-4", code: "(09) 4)", name: "Nur Ayuni", dob: "13-08-1993", status: "Bernikah", spouse: { id: "3-4_spouse", code: "(09-07)", name: "Muhammad Fauzan bin Yunus", dob: "14-03-1988", marriageDate: "02-02-2019" }, children: [{ id: "3-4-1", code: "[11] 4i)", name: "Muhammad Adam Fateh", dob: "28-03-2020 (19:55)", notes: "3.02 kg HSitBahiyah, A.Star", status: "Bujang" }, { id: "3-4-2", code: "[19] 4ii)", name: "Muhammad Azam Fathi", dob: "08-10-2024 (10:12)", notes: "2.51 kg HCTM, Cheras", status: "Bujang" }] }
                 ]
             },
             {
-                id: "4",
-                code: "(4)",
-                name: "Hajjah Norizan",
-                title: "Mak Anjang",
-                dob: "02-09-1960",
-                status: "Bernikah",
-                branch: 4,
-                generation: 1,
-                spouse: {
-                    id: "4_spouse",
-                    code: "(4-7)",
-                    name: "Jamaludin bin Ahmad",
-                    dob: "24-12-1965",
-                    marriageDate: "17-02-1999"
-                },
-                children: [
-                    {
-                        id: "4-1",
-                        code: "(19) 1)",
-                        name: "Muhammad Khairul Nazman",
-                        dob: "19-01-2000",
-                        status: "Bujang",
-                        children: []
-                    }
-                ]
+                id: "4", code: "(4)", name: "Hajjah Norizan", title: "Mak Anjang", dob: "02-09-1960", status: "Bernikah", branch: 4, generation: 1,
+                spouse: { id: "4_spouse", code: "(4-7)", name: "Jamaludin bin Ahmad", dob: "24-12-1965", marriageDate: "17-02-1999" },
+                children: [{ id: "4-1", code: "(19) 1)", name: "Muhammad Khairul Nazman", dob: "19-01-2000", status: "Bujang", children: [] }]
             },
             {
-                id: "5",
-                code: "(5)",
-                name: "Hajjah Siti Mahani",
-                title: "Mak Uteh",
-                dob: "13-01-1963",
-                status: "Bernikah",
-                branch: 5,
-                generation: 1,
-                spouse: {
-                    id: "5_spouse",
-                    code: "(5-4)",
-                    name: "Haji Ahmad Kamil bin Ibrahim",
-                    dob: "11-07-1960",
-                    marriageDate: "27-04-1991"
-                },
+                id: "5", code: "(5)", name: "Hajjah Siti Mahani", title: "Mak Uteh", dob: "13-01-1963", status: "Bernikah", branch: 5, generation: 1,
+                spouse: { id: "5_spouse", code: "(5-4)", name: "Haji Ahmad Kamil bin Ibrahim", dob: "11-07-1960", marriageDate: "27-04-1991" },
                 children: [
                     { id: "5-1", code: "(08) 1)", name: "Muhamad Nazmi", dob: "29-11-1992", status: "Bujang", children: [] },
                     { id: "5-2", code: "(10) 2)", name: "Muhamad Nizam", dob: "10-02-1994", status: "Bujang", children: [] },
                     { id: "5-3", code: "(13) 3)", name: "Najihah", dob: "25-09-1995", status: "Bujang", children: [] },
-                    {
-                        id: "5-4",
-                        code: "(16) 4)",
-                        name: "Nazirah",
-                        dob: "20-11-1996",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "5-4_spouse",
-                            code: "(16-11)",
-                            name: "Amirul bin Zulkefli",
-                            dob: "07-06-1993",
-                            marriageDate: "29-06-2024"
-                        },
-                        children: [
-                            { id: "5-4-1", code: "[21] 4i)", name: "Ahmad Zidan Alhaq", dob: "23-05-2026 (16:07)", notes: "3.03 kg H. Besar Taiping", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "5-5",
-                        code: "(20) 5)",
-                        name: "Mohamad Naim",
-                        dob: "07-08-2000",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "5-5_spouse",
-                            code: "(20-13)",
-                            name: "Siti Nadia Syafikah binti Ab Aziz",
-                            dob: "04-08-2000",
-                            marriageDate: "05-09-2026"
-                        },
-                        children: []
-                    }
+                    { id: "5-4", code: "(16) 4)", name: "Nazirah", dob: "20-11-1996", status: "Bernikah", spouse: { id: "5-4_spouse", code: "(16-11)", name: "Amirul bin Zulkefli", dob: "07-06-1993", marriageDate: "29-06-2024" }, children: [{ id: "5-4-1", code: "[21] 4i)", name: "Ahmad Zidan Alhaq", dob: "23-05-2026 (16:07)", notes: "3.03 kg H. Besar Taiping", status: "Bujang" }] },
+                    { id: "5-5", code: "(20) 5)", name: "Mohamad Naim", dob: "07-08-2000", status: "Bernikah", spouse: { id: "5-5_spouse", code: "(20-13)", name: "Siti Nadia Syafikah binti Ab Aziz", dob: "04-08-2000", marriageDate: "05-09-2026" }, children: [] }
                 ]
             },
             {
-                id: "6",
-                code: "(6)",
-                name: "Uzaid",
-                title: "Pak Andak",
-                dob: "31-05-1965",
-                status: "Bernikah",
-                branch: 6,
-                generation: 1,
-                spouse: {
-                    id: "6_spouse",
-                    code: "(6-5)",
-                    name: "Siti Tashah binti Md. Noh",
-                    dob: "08-10-1968",
-                    marriageDate: "08-10-1992"
-                },
+                id: "6", code: "(6)", name: "Uzaid", title: "Pak Andak", dob: "31-05-1965", status: "Bernikah", branch: 6, generation: 1,
+                spouse: { id: "6_spouse", code: "(6-5)", name: "Siti Tashah binti Md. Noh", dob: "08-10-1968", marriageDate: "08-10-1992" },
                 children: [
-                    {
-                        id: "6-1",
-                        code: "(11) 1)",
-                        name: "Nurul Shuhada",
-                        dob: "13-04-1994",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "6-1_spouse",
-                            code: "(11-09)",
-                            name: "Mohammad Akmal bin Hashim",
-                            dob: "14-11-1992",
-                            marriageDate: "13-06-2022"
-                        },
-                        children: [
-                            { id: "6-1-1", code: "[16] 1i)", name: "Dhia Medina", dob: "02-03-2023 (09:16)", notes: "2.82 kg H. Seberang Jaya", status: "Bujang" }
-                        ]
-                    },
-                    {
-                        id: "6-2",
-                        code: "(12) 2)",
-                        name: "Amirul Hafiz",
-                        dob: "02-09-1995",
-                        status: "Bernikah",
-                        spouse: {
-                            id: "6-2_spouse",
-                            code: "(12-08)",
-                            name: "Nur Hazira binti Amran",
-                            dob: "12-03-1995",
-                            marriageDate: "20-05-2022"
-                        },
-                        children: [
-                            { id: "6-2-1", code: "[15] 2i)", name: "Zara Humaira", dob: "15-02-2023 (12:50)", notes: "3.71 kg HospitalKualaLipis", status: "Bujang" }
-                        ]
-                    },
+                    { id: "6-1", code: "(11) 1)", name: "Nurul Shuhada", dob: "13-04-1994", status: "Bernikah", spouse: { id: "6-1_spouse", code: "(11-09)", name: "Mohammad Akmal bin Hashim", dob: "14-11-1992", marriageDate: "13-06-2022" }, children: [{ id: "6-1-1", code: "[16] 1i)", name: "Dhia Medina", dob: "02-03-2023 (09:16)", notes: "2.82 kg H. Seberang Jaya", status: "Bujang" }] },
+                    { id: "6-2", code: "(12) 2)", name: "Amirul Hafiz", dob: "02-09-1995", status: "Bernikah", spouse: { id: "6-2_spouse", code: "(12-08)", name: "Nur Hazira binti Amran", dob: "12-03-1995", marriageDate: "20-05-2022" }, children: [{ id: "6-2-1", code: "[15] 2i)", name: "Zara Humaira", dob: "15-02-2023 (12:50)", notes: "3.71 kg HospitalKualaLipis", status: "Bujang" }] },
                     { id: "6-3", code: "(17) 3)", name: "Amirul Hakimi", dob: "23-04-1997", status: "Bujang", children: [] },
                     { id: "6-4", code: "(24) 4)", name: "Amirul Haidie", dob: "08-11-2001", status: "Bujang", children: [] },
                     { id: "6-5", code: "(27) 5)", name: "Amirul Haris", dob: "22-03-2005", status: "Bujang", children: [] }
                 ]
             },
             {
-                id: "7",
-                code: "(7)",
-                name: "Hajjah Khairyah",
-                title: "Mak Itam",
-                dob: "16-08-1967",
-                status: "Bernikah",
-                notes: "Diambil sebagai anak angkat yang sah oleh bapa saudaranya, Haji Saidin bin Haji Ahmad 3 hari selepas lahir.",
-                branch: 7,
-                generation: 1,
-                spouse: {
-                    id: "7_spouse",
-                    code: "(7-6)",
-                    name: "Ir. Haji Abd. Rashid bin Haji Hashim, P. Eng.",
-                    dob: "05-02-1963",
-                    marriageDate: "18-03-1994"
-                },
+                id: "7", code: "(7)", name: "Hajjah Khairyah", title: "Mak Itam", dob: "16-08-1967", status: "Bernikah", notes: "Diambil sebagai anak angkat yang sah oleh bapa saudaranya, Haji Saidin bin Haji Ahmad 3 hari selepas lahir.", branch: 7, generation: 1,
+                spouse: { id: "7_spouse", code: "(7-6)", name: "Ir. Haji Abd. Rashid bin Haji Hashim, P. Eng.", dob: "05-02-1963", marriageDate: "18-03-1994" },
                 children: [
                     { id: "7-1", code: "(14) 1)", name: "Abdul Zaki", dob: "21-11-1995 (21:16)", notes: "3.54 kg H.Bersalin, HKL", status: "Bujang", children: [] },
                     { id: "7-2", code: "(23) 2)", name: "Aishah Zakiah", dob: "07-10-2001 (22:58)", notes: "4.20 kg H.Bersalin, HKL", status: "Bujang", children: [] }
                 ]
             },
             {
-                id: "8",
-                code: "(8)",
-                name: "Faridah",
-                title: "Mak Chik",
-                dob: "07-01-1970",
-                status: "Bernikah",
-                branch: 8,
-                generation: 1,
-                spouse: {
-                    id: "8_spouse",
-                    code: "(8-9)",
-                    name: "Mohd. Rozaini bin Md. Yusoff",
-                    dob: "05-08-1966",
-                    marriageDate: "14-11-1999"
-                },
+                id: "8", code: "(8)", name: "Faridah", title: "Mak Chik", dob: "07-01-1970", status: "Bernikah", branch: 8, generation: 1,
+                spouse: { id: "8_spouse", code: "(8-9)", name: "Mohd. Rozaini bin Md. Yusoff", dob: "05-08-1966", marriageDate: "14-11-1999" },
                 children: [
                     { id: "8-1", code: "(22) 1)", name: "Raihana Adilla", dob: "01-02-2001", status: "Bujang", children: [] },
                     { id: "8-2", code: "(26) 2)", name: "Raihan Amni", dob: "01-01-2004", status: "Bujang", children: [] },
@@ -809,21 +642,8 @@
                 ]
             },
             {
-                id: "9",
-                code: "(9)",
-                name: "Mazlina",
-                title: "Mak Su",
-                dob: "19-11-1974",
-                status: "Bernikah",
-                branch: 9,
-                generation: 1,
-                spouse: {
-                    id: "9_spouse",
-                    code: "(9-8)",
-                    name: "Farizan bin Ramli",
-                    dob: "04-05-1975",
-                    marriageDate: "23-05-1999"
-                },
+                id: "9", code: "(9)", name: "Mazlina", title: "Mak Su", dob: "19-11-1974", status: "Bernikah", branch: 9, generation: 1,
+                spouse: { id: "9_spouse", code: "(9-8)", name: "Farizan bin Ramli", dob: "04-05-1975", marriageDate: "23-05-1999" },
                 children: [
                     { id: "9-1", code: "(25) 1)", name: "Nur Farhah Adriana", dob: "29-09-2002", notes: "4.00 kg WBersalinSPetani", status: "Bujang", children: [] },
                     { id: "9-2", code: "(28) 2)", name: "Muhammad Farhan Adli", dob: "10-01-2007", notes: "3.8 kg WBersalinSPetani", status: "Bujang", children: [] }
@@ -831,14 +651,283 @@
             }
         ];
 
-        let familyTreeData = JSON.parse(JSON.stringify(defaultFamilyTreeData));
+        let familyTreeData = [];
+        let googleScriptUrl = localStorage.getItem('family_tree_script_url') || '';
         let currentTab = 'tree';
         let filterBranch = 'ALL';
         let searchQuery = '';
 
         window.onload = function() {
-            refreshAllViews();
+            checkAuth();
         };
+
+        function checkAuth() {
+            const savedRole = sessionStorage.getItem('family_tree_role');
+            const authModal = document.getElementById('authModal');
+
+            if (savedRole === 'ADMIN' || savedRole === 'FAMILY') {
+                currentUserRole = savedRole;
+                authModal.classList.add('hidden');
+                updateRoleBadgeUI();
+                initData();
+            } else {
+                authModal.classList.remove('hidden');
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function verifyPassword(event) {
+            event.preventDefault();
+            const input = document.getElementById('passwordInput').value.trim();
+            const errorMsg = document.getElementById('authErrorMsg');
+
+            if (input === PASS_ADMIN) {
+                currentUserRole = 'ADMIN';
+                sessionStorage.setItem('family_tree_role', 'ADMIN');
+                document.getElementById('authModal').classList.add('hidden');
+                errorMsg.classList.add('hidden');
+                updateRoleBadgeUI();
+                initData();
+                showToast("Log masuk berjaya sebagai PENTADBIR (ADMIN)!");
+            } else if (input === PASS_FAMILY) {
+                currentUserRole = 'FAMILY';
+                sessionStorage.setItem('family_tree_role', 'FAMILY');
+                document.getElementById('authModal').classList.add('hidden');
+                errorMsg.classList.add('hidden');
+                updateRoleBadgeUI();
+                initData();
+                showToast("Selamat datang AHLI KELUARGA!");
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function verifyAdminPassword(event) {
+            event.preventDefault();
+            const input = document.getElementById('adminPasswordInput').value.trim();
+            const errorMsg = document.getElementById('adminAuthError');
+
+            if (input === PASS_ADMIN) {
+                currentUserRole = 'ADMIN';
+                sessionStorage.setItem('family_tree_role', 'ADMIN');
+                closeModal('adminAuthModal');
+                errorMsg.classList.add('hidden');
+                updateRoleBadgeUI();
+                openAdminPanelModal();
+                showToast("Akses ADMINISTRATIVE disahkan!");
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('adminPasswordInput').value = '';
+            }
+        }
+
+        function accessAdminPanel() {
+            if (currentUserRole === 'ADMIN') {
+                openAdminPanelModal();
+            } else {
+                document.getElementById('adminPasswordInput').value = '';
+                document.getElementById('adminAuthError').classList.add('hidden');
+                document.getElementById('adminAuthModal').classList.remove('hidden');
+            }
+        }
+
+        function openAdminPanelModal() {
+            document.getElementById('googleScriptUrlInput').value = googleScriptUrl;
+            document.getElementById('adminAnakCount').innerText = familyTreeData.length;
+            document.getElementById('adminPanelModal').classList.remove('hidden');
+        }
+
+        function updateRoleBadgeUI() {
+            const badge = document.getElementById('roleBadge');
+            if (currentUserRole === 'ADMIN') {
+                badge.className = "bg-rose-500 text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1";
+                badge.innerHTML = `<i class="fa-solid fa-user-shield"></i> PENTADBIR`;
+            } else {
+                badge.className = "bg-amber-400 text-amber-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm";
+                badge.innerHTML = `Ahli Keluarga`;
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('togglePassIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function lockSystem() {
+            sessionStorage.removeItem('family_tree_role');
+            currentUserRole = 'FAMILY';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('authErrorMsg').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('hidden');
+            showToast("Aplikasi dikunci.");
+        }
+
+        // =========================================================
+        // Dynamic Age Calculation Helper
+        // =========================================================
+        function calculateAge(dobStr, dodStr, status, ageAtDeath) {
+            if (status === 'Meninggal Dunia' || dodStr || ageAtDeath) {
+                if (ageAtDeath) {
+                    return `(${ageAtDeath} - meninggal)`;
+                }
+                const birthYear = parseYear(dobStr);
+                const deathYear = parseYear(dodStr);
+                if (birthYear && deathYear) {
+                    const age = deathYear - birthYear;
+                    return `(${age} tahun - meninggal)`;
+                }
+                return `(meninggal)`;
+            }
+
+            const birthYear = parseYear(dobStr);
+            if (birthYear) {
+                const currentYear = 2026; // System Context Year
+                let age = currentYear - birthYear;
+                
+                const parts = parseFullDate(dobStr);
+                if (parts) {
+                    const today = new Date(2026, 9, 7); // Oct 7, 2026
+                    let calcAge = today.getFullYear() - parts.year;
+                    const monthDiff = today.getMonth() - (parts.month - 1);
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < parts.day)) {
+                        calcAge--;
+                    }
+                    if (calcAge >= 0) age = calcAge;
+                }
+                return `(${age} tahun)`;
+            }
+            return '';
+        }
+
+        function parseYear(dateStr) {
+            if (!dateStr) return null;
+            const match = dateStr.match(/\b(19\d\d|20\d\d)\b/);
+            return match ? parseInt(match[1], 10) : null;
+        }
+
+        function parseFullDate(dateStr) {
+            if (!dateStr) return null;
+            const match = dateStr.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+            if (match) {
+                return {
+                    day: parseInt(match[1], 10),
+                    month: parseInt(match[2], 10),
+                    year: parseInt(match[3], 10)
+                };
+            }
+            return null;
+        }
+
+        function getFormattedNameWithAge(member) {
+            if (!member || !member.name) return '';
+            const ageText = calculateAge(member.dob, member.dod, member.status, member.ageAtDeath);
+            if (ageText) {
+                const isDeceased = member.status === 'Meninggal Dunia' || Boolean(member.dod);
+                const colorClass = isDeceased ? 'text-rose-700 font-bold' : 'text-slate-500 font-semibold';
+                return `${member.name} <span class="text-[11px] ${colorClass} ml-1">${ageText}</span>`;
+            }
+            return member.name;
+        }
+
+        function getFormattedNameWithAgePlain(member) {
+            if (!member || !member.name) return '';
+            const ageText = calculateAge(member.dob, member.dod, member.status, member.ageAtDeath);
+            return ageText ? `${member.name} ${ageText}` : member.name;
+        }
+
+        // =========================================================
+        // Data Sync & Storage Logic
+        // =========================================================
+        async function initData() {
+            updateSyncBadge();
+            if (googleScriptUrl) {
+                await fetchFromGoogleSheet();
+            } else {
+                const storedLocal = localStorage.getItem('family_tree_local_data');
+                familyTreeData = storedLocal ? JSON.parse(storedLocal) : JSON.parse(JSON.stringify(defaultFamilyTreeData));
+                refreshAllViews();
+            }
+        }
+
+        function updateSyncBadge() {
+            const badge = document.getElementById('syncBadge');
+            if (googleScriptUrl) {
+                badge.className = "bg-teal-900/80 border border-teal-300/40 text-teal-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1";
+                badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-300"></i> Sheets Online`;
+            } else {
+                badge.className = "bg-emerald-900/80 border border-emerald-400/40 text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1";
+                badge.innerHTML = `<i class="fa-solid fa-database text-amber-300"></i> Local Storage`;
+            }
+        }
+
+        async function fetchFromGoogleSheet() {
+            if (!googleScriptUrl) return;
+            showLoadingBanner("Memuatkan data terkini dari Google Sheets...");
+
+            try {
+                const res = await fetch(googleScriptUrl + '?action=getData');
+                const result = await res.json();
+                if (result.status === 'success' && result.data && result.data.length > 0) {
+                    familyTreeData = result.data;
+                    localStorage.setItem('family_tree_local_data', JSON.stringify(familyTreeData));
+                    showToast("Data salasilah terkini dimuat turun dari Google Sheets!");
+                } else {
+                    fallbackToLocal("Respons Google Sheets tidak mengandungi data sah.");
+                }
+            } catch (err) {
+                console.error(err);
+                fallbackToLocal("Gagal menghubungkan ke Google Sheets API. Menggunakan data tersimpan tempatan.");
+            } finally {
+                hideLoadingBanner();
+                refreshAllViews();
+            }
+        }
+
+        function fallbackToLocal(msg) {
+            const storedLocal = localStorage.getItem('family_tree_local_data');
+            familyTreeData = storedLocal ? JSON.parse(storedLocal) : JSON.parse(JSON.stringify(defaultFamilyTreeData));
+            showToast(msg);
+        }
+
+        async function saveDataToCloudOrLocal() {
+            localStorage.setItem('family_tree_local_data', JSON.stringify(familyTreeData));
+
+            if (googleScriptUrl) {
+                showLoadingBanner("Menyimpan & mengemas kini Google Sheets...");
+                try {
+                    await fetch(googleScriptUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'saveData', data: familyTreeData })
+                    });
+                    showToast("Kemaskini berjaya dihantar ke Google Sheets!");
+                } catch (err) {
+                    showToast("Gagal menyimpan ke Google Sheets, data disimpan secara Tempatan.");
+                } finally {
+                    hideLoadingBanner();
+                }
+            }
+        }
+
+        function showLoadingBanner(text) {
+            const banner = document.getElementById('loadingBanner');
+            document.getElementById('loadingBannerText').innerText = text;
+            banner.classList.remove('hidden');
+        }
+
+        function hideLoadingBanner() {
+            document.getElementById('loadingBanner').classList.add('hidden');
+        }
 
         function refreshAllViews() {
             updateMetricsHeader();
@@ -856,11 +945,13 @@
             let totalCicit = 0;
 
             familyTreeData.forEach(a => {
-                totalCucu += a.children.length;
-                a.children.forEach(c => {
-                    if (c.spouse) totalCucuMenantu++;
-                    if (c.children) totalCicit += c.children.length;
-                });
+                totalCucu += a.children ? a.children.length : 0;
+                if (a.children) {
+                    a.children.forEach(c => {
+                        if (c.spouse) totalCucuMenantu++;
+                        if (c.children) totalCicit += c.children.length;
+                    });
+                }
             });
 
             let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
@@ -923,7 +1014,7 @@
 
                 const matchesParent = item.name.toLowerCase().includes(searchQuery) || (item.title && item.title.toLowerCase().includes(searchQuery));
                 const matchesSpouse = item.spouse && item.spouse.name.toLowerCase().includes(searchQuery);
-                const matchesCucu = item.children.some(c => 
+                const matchesCucu = item.children && item.children.some(c => 
                     c.name.toLowerCase().includes(searchQuery) || 
                     (c.spouse && c.spouse.name.toLowerCase().includes(searchQuery)) ||
                     (c.children && c.children.some(cc => cc.name.toLowerCase().includes(searchQuery)))
@@ -952,9 +1043,9 @@
 
                 let spouseHtml = child.spouse ? `
                     <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <i class="fa-solid fa-heart text-rose-500"></i>
-                            <span class="font-bold text-slate-800">${child.spouse.name}</span>
+                            <span class="font-bold text-slate-800">${getFormattedNameWithAge(child.spouse)}</span>
                             <span class="text-slate-400 font-mono text-[11px]">(${child.spouse.code || ''})</span>
                             ${child.spouse.marriageDate ? `<span class="bg-rose-50 text-rose-700 px-2 py-0.5 rounded-md text-[10px] font-medium">Nikah: ${child.spouse.marriageDate}</span>` : ''}
                             ${child.spouse.status === 'Meninggal Dunia' ? `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-medium"><i class="fa-solid fa-ribbon mr-1"></i>Meninggal</span>` : ''}
@@ -965,11 +1056,11 @@
                     </div>
                 ` : '';
 
-                let childrenCount = child.children.length;
-                let grandChildrenCount = child.children.reduce((acc, c) => acc + (c.children ? c.children.length : 0), 0);
+                let childrenArr = child.children || [];
+                let childrenCount = childrenArr.length;
+                let grandChildrenCount = childrenArr.reduce((acc, c) => acc + (c.children ? c.children.length : 0), 0);
 
                 branchCard.innerHTML = `
-                    <!-- Head Anak -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                         <div class="flex items-start gap-3">
                             <div class="w-9 h-9 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-xs shrink-0 mt-0.5 shadow-sm">
@@ -978,7 +1069,7 @@
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="font-mono text-xs font-extrabold text-emerald-700">${child.code}</span>
-                                    <h3 class="font-bold text-base text-slate-900">${child.name}</h3>
+                                    <h3 class="font-bold text-base text-slate-900">${getFormattedNameWithAge(child)}</h3>
                                     ${child.title ? `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[11px] font-bold">${child.title}</span>` : ''}
                                     ${statusBadge}
                                     <button onclick="openEditMemberModal('${child.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ml-1" title="Kemaskini maklumat anak">
@@ -1003,7 +1094,6 @@
                         </div>
                     </div>
 
-                    <!-- Generasi Cucu -->
                     <div class="pl-2 sm:pl-4 border-l-2 border-emerald-300 space-y-4">
                         <h4 class="text-[11px] font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-folder-tree text-emerald-600"></i>
@@ -1011,7 +1101,7 @@
                         </h4>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                            ${child.children.map(cucu => renderCucuCard(cucu, child.id)).join('')}
+                            ${childrenArr.map(cucu => renderCucuCard(cucu, child.id)).join('')}
                         </div>
                     </div>
                 `;
@@ -1031,7 +1121,7 @@
                 <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 flex items-center justify-between">
                     <div>
                         <i class="fa-solid fa-heart text-rose-500 mr-1 text-[10px]"></i>
-                        <span class="font-bold text-slate-800">${cucu.spouse.name}</span>
+                        <span class="font-bold text-slate-800">${getFormattedNameWithAge(cucu.spouse)}</span>
                         <span class="text-[10px] text-slate-400 font-mono">(${cucu.spouse.code || ''})</span>
                     </div>
                     <button onclick="openEditMemberModal('${cucu.spouse.id || cucu.id + '_spouse'}')" class="text-slate-400 hover:text-emerald-700 text-[10px]" title="Edit Pasangan Cucu">
@@ -1055,8 +1145,8 @@
                         ${cucu.children.map(cicit => `
                             <div class="bg-purple-50/80 rounded-xl p-2 border border-purple-100 text-xs flex items-center justify-between">
                                 <div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="font-bold text-slate-800">${cicit.name}</span>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="font-bold text-slate-800">${getFormattedNameWithAge(cicit)}</span>
                                         <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code || ''}</span>
                                         ${cicit.status === 'Meninggal Dunia' ? `<span class="bg-rose-100 text-rose-700 text-[9px] px-1 rounded font-bold">Meninggal</span>` : ''}
                                     </div>
@@ -1089,7 +1179,7 @@
                     <div class="flex items-start justify-between gap-2">
                         <div>
                             <span class="font-mono text-[11px] font-black text-blue-700">${cucu.code || ''}</span>
-                            <h5 class="font-bold text-sm text-slate-900">${cucu.name}</h5>
+                            <h5 class="font-bold text-sm text-slate-900">${getFormattedNameWithAge(cucu)}</h5>
                             <p class="text-[11px] text-slate-500">Lahir: ${cucu.dob || '—'} ${cucu.dod ? `| Dod: ${cucu.dod}` : ''}</p>
                             ${cucu.causeOfDeath ? `<p class="text-[10px] text-rose-700 mt-0.5">Sebab Kematian: ${cucu.causeOfDeath}</p>` : ''}
                         </div>
@@ -1123,18 +1213,20 @@
                         allMembers.push({ ...anak.spouse, id: anak.spouse.id || (anak.id + '_spouse'), role: 'Anak Menantu', branch: anak.branch, codeDisplay: anak.spouse.code });
                     }
 
-                    anak.children.forEach(cucu => {
-                        allMembers.push({ ...cucu, role: 'Cucu', branch: anak.branch, codeDisplay: cucu.code });
-                        if (cucu.spouse) {
-                            allMembers.push({ ...cucu.spouse, id: cucu.spouse.id || (cucu.id + '_spouse'), role: 'Cucu Menantu', branch: anak.branch, codeDisplay: cucu.spouse.code });
-                        }
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            allMembers.push({ ...cucu, role: 'Cucu', branch: anak.branch, codeDisplay: cucu.code });
+                            if (cucu.spouse) {
+                                allMembers.push({ ...cucu.spouse, id: cucu.spouse.id || (cucu.id + '_spouse'), role: 'Cucu Menantu', branch: anak.branch, codeDisplay: cucu.spouse.code });
+                            }
 
-                        if (cucu.children) {
-                            cucu.children.forEach(cicit => {
-                                allMembers.push({ ...cicit, role: 'Cicit', branch: anak.branch, codeDisplay: cicit.code });
-                            });
-                        }
-                    });
+                            if (cucu.children) {
+                                cucu.children.forEach(cicit => {
+                                    allMembers.push({ ...cicit, role: 'Cicit', branch: anak.branch, codeDisplay: cicit.code });
+                                });
+                            }
+                        });
+                    }
                 }
             });
 
@@ -1164,7 +1256,7 @@
                             <span class="font-mono text-xs font-black text-slate-500">${member.codeDisplay || ''}</span>
                             <span class="${badgeColor} px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">${member.role}</span>
                         </div>
-                        <h4 class="font-bold text-slate-900 text-sm">${member.name}</h4>
+                        <h4 class="font-bold text-slate-900 text-sm">${getFormattedNameWithAge(member)}</h4>
                         <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-cake-candles mr-1 text-slate-400"></i> ${member.dob || '—'}</p>
                         ${member.status === 'Meninggal Dunia' ? `<p class="text-xs text-rose-600 mt-0.5 font-bold"><i class="fa-solid fa-ribbon mr-1"></i> Meninggal: ${member.dod || '—'}</p>` : ''}
                         ${member.marriageDate ? `<p class="text-xs text-rose-600 mt-0.5 font-medium"><i class="fa-solid fa-ring mr-1"></i> Nikah: ${member.marriageDate}</p>` : ''}
@@ -1193,11 +1285,13 @@
             let totalCicit = 0;
 
             familyTreeData.forEach(a => {
-                totalCucu += a.children.length;
-                a.children.forEach(c => {
-                    if (c.spouse) totalCucuMenantu++;
-                    if (c.children) totalCicit += c.children.length;
-                });
+                if (a.children) {
+                    totalCucu += a.children.length;
+                    a.children.forEach(c => {
+                        if (c.spouse) totalCucuMenantu++;
+                        if (c.children) totalCicit += c.children.length;
+                    });
+                }
             });
 
             let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
@@ -1235,9 +1329,10 @@
 
             branchContainer.innerHTML = '';
             familyTreeData.forEach(anak => {
-                const cucuCount = anak.children.length;
-                const cucuMenantuCount = anak.children.filter(c => c.spouse).length;
-                const cicitCount = anak.children.reduce((acc, c) => acc + (c.children ? c.children.length : 0), 0);
+                const cucuArr = anak.children || [];
+                const cucuCount = cucuArr.length;
+                const cucuMenantuCount = cucuArr.filter(c => c.spouse).length;
+                const cicitCount = cucuArr.reduce((acc, c) => acc + (c.children ? c.children.length : 0), 0);
                 const totalBranch = 1 + (anak.spouse ? 1 : 0) + cucuCount + cucuMenantuCount + cicitCount;
 
                 const item = document.createElement('div');
@@ -1249,8 +1344,8 @@
                             ${anak.branch}
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">${anak.name} ${anak.title ? `(${anak.title})` : ''}</h4>
-                            <p class="text-xs text-slate-500">Pasangan: ${anak.spouse ? anak.spouse.name : '—'}</p>
+                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">${getFormattedNameWithAge(anak)} ${anak.title ? `(${anak.title})` : ''}</h4>
+                            <p class="text-xs text-slate-500">Pasangan: ${anak.spouse ? getFormattedNameWithAgePlain(anak.spouse) : '—'}</p>
                         </div>
                     </div>
 
@@ -1274,7 +1369,6 @@
             });
         }
 
-        // Search helper function to locate member by ID across tree
         function findMemberById(id) {
             for (let anak of familyTreeData) {
                 if (anak.id === id) return { item: anak, level: 'ANAK' };
@@ -1283,21 +1377,45 @@
                     return { item: anak.spouse, level: 'PASANGAN_ANAK' };
                 }
 
-                for (let cucu of anak.children) {
-                    if (cucu.id === id) return { item: cucu, level: 'CUCU' };
-                    if (cucu.spouse && (cucu.spouse.id === id || id === cucu.id + '_spouse')) {
-                        if (!cucu.spouse.id) cucu.spouse.id = cucu.id + '_spouse';
-                        return { item: cucu.spouse, level: 'PASANGAN_CUCU' };
-                    }
+                if (anak.children) {
+                    for (let cucu of anak.children) {
+                        if (cucu.id === id) return { item: cucu, level: 'CUCU' };
+                        if (cucu.spouse && (cucu.spouse.id === id || id === cucu.id + '_spouse')) {
+                            if (!cucu.spouse.id) cucu.spouse.id = cucu.id + '_spouse';
+                            return { item: cucu.spouse, level: 'PASANGAN_CUCU' };
+                        }
 
-                    if (cucu.children) {
-                        for (let cicit of cucu.children) {
-                            if (cicit.id === id) return { item: cicit, level: 'CICIT' };
+                        if (cucu.children) {
+                            for (let cicit of cucu.children) {
+                                if (cicit.id === id) return { item: cicit, level: 'CICIT' };
+                            }
                         }
                     }
                 }
             }
             return null;
+        }
+
+        function saveApiUrl() {
+            const url = document.getElementById('googleScriptUrlInput').value.trim();
+            googleScriptUrl = url;
+            localStorage.setItem('family_tree_script_url', url);
+            closeModal('adminPanelModal');
+            updateSyncBadge();
+            if (url) {
+                fetchFromGoogleSheet();
+            } else {
+                refreshAllViews();
+            }
+        }
+
+        function clearApiUrl() {
+            googleScriptUrl = '';
+            localStorage.removeItem('family_tree_script_url');
+            document.getElementById('googleScriptUrlInput').value = '';
+            closeModal('adminPanelModal');
+            updateSyncBadge();
+            initData();
         }
 
         function openAddMemberModal(presetLevel = 'CUCU', parentId = '') {
@@ -1328,7 +1446,6 @@
             document.getElementById('formTitle').innerText = `Kemaskini: ${m.name}`;
             document.getElementById('editTargetId').value = id;
 
-            // Hide generation parent selectors during editing
             document.getElementById('levelSelectContainer').classList.add('hidden');
             document.getElementById('parentSelectContainer').classList.add('hidden');
 
@@ -1338,7 +1455,7 @@
             document.getElementById('formStatus').value = m.status || 'Bujang';
             document.getElementById('formMarriageDate').value = m.marriageDate || '';
             document.getElementById('formDod').value = m.dod || '';
-            document.getElementById('formCauseOfDeath').value = m.causeOfDeath || '';
+            document.getElementById('formCauseOfDeath').value = m.causeOfDeath || m.ageAtDeath || '';
             document.getElementById('formNotes').value = m.notes || '';
 
             toggleDeathFields();
@@ -1378,30 +1495,27 @@
             } else if (level === 'CICIT') {
                 parentLabel.innerText = "Pilih Ibu / Bapa (Ahli Cucu) *";
                 familyTreeData.forEach(anak => {
-                    anak.children.forEach(cucu => {
-                        const opt = document.createElement('option');
-                        opt.value = cucu.id;
-                        opt.text = `${anak.branch}) ${cucu.name} [Anak: ${anak.name}]`;
-                        if (selectedParentId && cucu.id === selectedParentId) opt.selected = true;
-                        parentSelect.appendChild(opt);
-                    });
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            const opt = document.createElement('option');
+                            opt.value = cucu.id;
+                            opt.text = `${anak.branch}) ${cucu.name} [Anak: ${anak.name}]`;
+                            if (selectedParentId && cucu.id === selectedParentId) opt.selected = true;
+                            parentSelect.appendChild(opt);
+                        });
+                    }
                 });
             }
         }
 
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
 
             const editId = document.getElementById('editTargetId').value;
             const isEdit = Boolean(editId);
 
-            // Pop-up Pengesahan Perubahan Maklumat
-            const confirmMessage = isEdit 
-                ? "Adakah anda pasti ingin mengubah maklumat ahli keluarga ini?" 
-                : "Adakah anda pasti ingin menambah maklumat ahli keluarga baru ini?";
-
-            if (!confirm(confirmMessage)) {
-                return; // Batalkan jika pengguna klik 'Cancel'
+            if (!confirm(isEdit ? "Adakah anda pasti ingin mengubah maklumat ahli keluarga ini?" : "Adakah anda pasti ingin menambah maklumat ahli keluarga baru ini?")) {
+                return;
             }
 
             const name = document.getElementById('formName').value.trim();
@@ -1414,7 +1528,6 @@
             const notes = document.getElementById('formNotes').value.trim();
 
             if (editId) {
-                // EDIT MODE
                 const match = findMemberById(editId);
                 if (match) {
                     let m = match.item;
@@ -1426,11 +1539,8 @@
                     if (dod) m.dod = dod;
                     if (causeOfDeath) m.causeOfDeath = causeOfDeath;
                     m.notes = notes;
-
-                    showToast(`Maklumat ${name} berjaya dikemaskini!`);
                 }
             } else {
-                // ADD MODE
                 const level = document.getElementById('formTargetLevel').value;
                 const parentId = document.getElementById('formParentSelect').value;
                 const newId = "id_" + Date.now();
@@ -1438,83 +1548,65 @@
                 if (level === 'CUCU') {
                     const targetAnak = familyTreeData.find(a => a.id === parentId);
                     if (targetAnak) {
+                        if (!targetAnak.children) targetAnak.children = [];
                         targetAnak.children.push({
-                            id: newId,
-                            code: code || `(${targetAnak.children.length + 1})`,
-                            name: name,
-                            dob: dob,
-                            status: status,
-                            marriageDate: marriageDate,
-                            dod: dod,
-                            causeOfDeath: causeOfDeath,
-                            notes: notes,
-                            children: []
+                            id: newId, code: code || `(${targetAnak.children.length + 1})`,
+                            name: name, dob: dob, status: status, marriageDate: marriageDate,
+                            dod: dod, causeOfDeath: causeOfDeath, notes: notes, children: []
                         });
                     }
                 } else if (level === 'CICIT') {
                     for (let anak of familyTreeData) {
-                        let targetCucu = anak.children.find(c => c.id === parentId);
-                        if (targetCucu) {
-                            if (!targetCucu.children) targetCucu.children = [];
-                            targetCucu.children.push({
-                                id: newId,
-                                code: code || `[${targetCucu.children.length + 1}]`,
-                                name: name,
-                                dob: dob,
-                                status: status,
-                                marriageDate: marriageDate,
-                                dod: dod,
-                                causeOfDeath: causeOfDeath,
-                                notes: notes
-                            });
-                            break;
+                        if (anak.children) {
+                            let targetCucu = anak.children.find(c => c.id === parentId);
+                            if (targetCucu) {
+                                if (!targetCucu.children) targetCucu.children = [];
+                                targetCucu.children.push({
+                                    id: newId, code: code || `[${targetCucu.children.length + 1}]`,
+                                    name: name, dob: dob, status: status, marriageDate: marriageDate,
+                                    dod: dod, causeOfDeath: causeOfDeath, notes: notes
+                                });
+                                break;
+                            }
                         }
                     }
                 } else if (level === 'PASANGAN') {
                     const targetAnak = familyTreeData.find(a => a.id === parentId);
                     if (targetAnak) {
                         targetAnak.spouse = {
-                            id: newId,
-                            code: code || `(${targetAnak.branch}-S)`,
-                            name: name,
-                            dob: dob,
-                            status: status,
-                            marriageDate: marriageDate,
-                            dod: dod,
-                            causeOfDeath: causeOfDeath
+                            id: newId, code: code || `(${targetAnak.branch}-S)`,
+                            name: name, dob: dob, status: status, marriageDate: marriageDate,
+                            dod: dod, causeOfDeath: causeOfDeath
                         };
                     }
                 }
-
-                showToast(`Berjaya menambah ${name}!`);
             }
 
             refreshAllViews();
             closeModal('addMemberModal');
+            await saveDataToCloudOrLocal();
         }
 
-        function deleteMember(id, level) {
-            // Pop-up Pengesahan Sebelum Memadam Data
-            if (!confirm("Adakah anda pasti ingin mengubah maklumat dengan MEMADAM ahli keluarga ini?")) {
-                return; // Batalkan pemadaman jika pengguna pilih Cancel
-            }
+        async function deleteMember(id, level) {
+            if (!confirm("Adakah anda pasti ingin memadam ahli keluarga ini?")) return;
 
             if (level === 'CUCU') {
                 familyTreeData.forEach(anak => {
-                    anak.children = anak.children.filter(c => c.id !== id);
+                    if (anak.children) anak.children = anak.children.filter(c => c.id !== id);
                 });
             } else if (level === 'CICIT') {
                 familyTreeData.forEach(anak => {
-                    anak.children.forEach(cucu => {
-                        if (cucu.children) {
-                            cucu.children = cucu.children.filter(cc => cc.id !== id);
-                        }
-                    });
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) cucu.children = cucu.children.filter(cc => cc.id !== id);
+                        });
+                    }
                 });
             }
 
             refreshAllViews();
             showToast("Ahli keluarga telah dipadam.");
+            await saveDataToCloudOrLocal();
         }
 
         function exportDataJSON() {
@@ -1532,19 +1624,19 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // Pop-up Pengesahan Sebelum Muat Naik / Timpa Data Baru
-            if (!confirm("Adakah anda pasti ingin mengubah maklumat salasilah dengan memuat naik fail data baru ini?")) {
-                event.target.value = ''; // Reset input fail jika dibatalkan
+            if (!confirm("Adakah anda pasti ingin memuat naik dan menimpa data salasilah terkini?")) {
+                event.target.value = '';
                 return;
             }
 
             const fileReader = new FileReader();
-            fileReader.onload = function() {
+            fileReader.onload = async function() {
                 try {
                     const parsedData = JSON.parse(fileReader.result);
                     if (Array.isArray(parsedData) && parsedData.length > 0) {
                         familyTreeData = parsedData;
                         refreshAllViews();
+                        await saveDataToCloudOrLocal();
                         showToast("Data salasilah berjaya dikemaskini dari fail JSON!");
                     } else {
                         showToast("Format fail JSON tidak sah!");
@@ -1568,7 +1660,7 @@
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-extrabold text-slate-900">${member.name}</h3>
+                        <h3 class="text-lg font-extrabold text-slate-900">${getFormattedNameWithAge(member)}</h3>
                         ${member.title ? `<p class="text-xs font-bold text-amber-700 mt-0.5">Gelaran: ${member.title}</p>` : ''}
                     </div>
 
@@ -1625,21 +1717,16 @@
                     .header { text-align: center; border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 20px; }
                     .header h1 { margin: 0; font-size: 16px; color: #0f766e; text-transform: uppercase; }
                     .header h2 { margin: 4px 0 0 0; font-size: 12px; font-weight: normal; color: #334155; }
-                    .header p { margin: 4px 0 0 0; font-size: 10px; color: #64748b; italic; }
+                    .header p { margin: 4px 0 0 0; font-size: 10px; color: #64748b; font-style: italic; }
                     .section-title { background: #f0fdf4; color: #166534; font-size: 12px; font-weight: bold; padding: 6px 10px; border-left: 4px solid #16a34a; margin-top: 18px; margin-bottom: 8px; }
                     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
                     th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
                     th { background-color: #f8fafc; font-weight: bold; color: #334155; }
-                    .text-center { text-align: center; }
-                    .font-mono { font-family: monospace; }
                     .badge { display: inline-block; padding: 2px 5px; font-size: 9px; font-weight: bold; border-radius: 4px; }
                     .badge-anak { background: #dcfce7; color: #15803d; }
                     .badge-cucu { background: #dbeafe; color: #1e40af; }
                     .badge-cicit { background: #f3e8ff; color: #6b21a8; }
-                    @media print {
-                        body { padding: 0; }
-                        button { display: none; }
-                    }
+                    @media print { body { padding: 0; } }
                 </style>
             </head>
             <body>
@@ -1652,150 +1739,139 @@
 
             familyTreeData.forEach(anak => {
                 printHTML += `
-                    <div class="section-title">
-                        Cabang ${anak.branch}: ${anak.name} ${anak.title ? '(' + anak.title + ')' : ''} 
-                        ${anak.spouse ? ' & ' + anak.spouse.name : ''}
-                    </div>
+                    <div class="section-title">Cabang ${anak.branch}: ${getFormattedNameWithAgePlain(anak)} ${anak.title ? '(' + anak.title + ')' : ''} ${anak.spouse ? '& ' + getFormattedNameWithAgePlain(anak.spouse) : ''}</div>
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 8%;">Kod</th>
                                 <th style="width: 12%;">Hubungan</th>
-                                <th style="width: 30%;">Nama Penuh</th>
+                                <th style="width: 30%;">Nama Penuh & Umur</th>
                                 <th style="width: 12%;">Tarikh Lahir</th>
                                 <th style="width: 12%;">Tarikh Nikah</th>
                                 <th style="width: 26%;">Status / Catatan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Anak Utama -->
                             <tr style="background-color: #f1f5f9; font-weight: bold;">
-                                <td class="font-mono">${anak.code}</td>
+                                <td>${anak.code}</td>
                                 <td><span class="badge badge-anak">Anak Utama</span></td>
-                                <td>${anak.name} ${anak.title ? '(' + anak.title + ')' : ''}</td>
+                                <td>${getFormattedNameWithAgePlain(anak)} ${anak.title ? '(' + anak.title + ')' : ''}</td>
                                 <td>${anak.dob || '—'}</td>
                                 <td>—</td>
-                                <td>${anak.status} ${anak.dod ? '| Meninggal: ' + anak.dod : ''} ${anak.causeOfDeath ? '(' + anak.causeOfDeath + ')' : ''}</td>
+                                <td>${anak.status} ${anak.dod ? '| Meninggal: ' + anak.dod : ''}</td>
                             </tr>
                 `;
 
                 if (anak.spouse) {
                     printHTML += `
                         <tr style="background-color: #fafafa;">
-                            <td class="font-mono">${anak.spouse.code || ''}</td>
+                            <td>${anak.spouse.code || ''}</td>
                             <td>Pasangan</td>
-                            <td>${anak.spouse.name}</td>
+                            <td>${getFormattedNameWithAgePlain(anak.spouse)}</td>
                             <td>${anak.spouse.dob || '—'}</td>
                             <td>${anak.spouse.marriageDate || '—'}</td>
-                            <td>${anak.spouse.dod ? 'Meninggal: ' + anak.spouse.dod : '—'} ${anak.spouse.causeOfDeath ? '(' + anak.spouse.causeOfDeath + ')' : ''}</td>
+                            <td>${anak.spouse.status || 'Bernikah'} ${anak.spouse.dod ? '| Meninggal: ' + anak.spouse.dod : ''}</td>
                         </tr>
                     `;
                 }
 
-                anak.children.forEach(cucu => {
-                    printHTML += `
-                        <tr>
-                            <td class="font-mono" style="padding-left: 12px;">${cucu.code || ''}</td>
-                            <td><span class="badge badge-cucu">Cucu</span></td>
-                            <td><strong>${cucu.name}</strong></td>
-                            <td>${cucu.dob || '—'}</td>
-                            <td>${cucu.spouse ? (cucu.spouse.marriageDate || '—') : '—'}</td>
-                            <td>${cucu.status} ${cucu.dod ? '| Meninggal: ' + cucu.dod : ''} ${cucu.notes ? '[' + cucu.notes + ']' : ''}</td>
-                        </tr>
-                    `;
-
-                    if (cucu.spouse) {
+                if (anak.children && anak.children.length > 0) {
+                    anak.children.forEach(cucu => {
                         printHTML += `
-                            <tr style="color: #475569;">
-                                <td class="font-mono" style="padding-left: 18px;">${cucu.spouse.code || ''}</td>
-                                <td>Cucu Menantu</td>
-                                <td>${cucu.spouse.name}</td>
-                                <td>${cucu.spouse.dob || '—'}</td>
-                                <td>${cucu.spouse.marriageDate || '—'}</td>
-                                <td>—</td>
+                            <tr>
+                                <td><b>${cucu.code || ''}</b></td>
+                                <td><span class="badge badge-cucu">Cucu</span></td>
+                                <td>${getFormattedNameWithAgePlain(cucu)}</td>
+                                <td>${cucu.dob || '—'}</td>
+                                <td>${cucu.marriageDate || '—'}</td>
+                                <td>${cucu.status} ${cucu.dod ? '| Meninggal: ' + cucu.dod : ''} ${cucu.notes ? ' (' + cucu.notes + ')' : ''}</td>
                             </tr>
                         `;
-                    }
 
-                    if (cucu.children) {
-                        cucu.children.forEach(cicit => {
+                        if (cucu.spouse) {
                             printHTML += `
-                                <tr style="color: #581c87; background-color: #faf5ff;">
-                                    <td class="font-mono" style="padding-left: 24px;">${cicit.code || ''}</td>
-                                    <td><span class="badge badge-cicit">Cicit</span></td>
-                                    <td>${cicit.name}</td>
-                                    <td>${cicit.dob || '—'}</td>
-                                    <td>—</td>
-                                    <td>${cicit.notes || '—'}</td>
+                                <tr style="background-color: #fafafa;">
+                                    <td>${cucu.spouse.code || ''}</td>
+                                    <td>Menantu Cucu</td>
+                                    <td>${getFormattedNameWithAgePlain(cucu.spouse)}</td>
+                                    <td>${cucu.spouse.dob || '—'}</td>
+                                    <td>${cucu.spouse.marriageDate || '—'}</td>
+                                    <td>${cucu.spouse.status || 'Bernikah'}</td>
                                 </tr>
                             `;
-                        });
-                    }
-                });
+                        }
 
-                printHTML += `
-                        </tbody>
-                    </table>
-                `;
+                        if (cucu.children && cucu.children.length > 0) {
+                            cucu.children.forEach(cicit => {
+                                printHTML += `
+                                    <tr>
+                                        <td>${cicit.code || ''}</td>
+                                        <td><span class="badge badge-cicit">Cicit</span></td>
+                                        <td>${getFormattedNameWithAgePlain(cicit)}</td>
+                                        <td>${cicit.dob || '—'}</td>
+                                        <td>—</td>
+                                        <td>${cicit.status} ${cicit.notes ? ' (' + cicit.notes + ')' : ''}</td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                    });
+                }
+
+                printHTML += `</tbody></table>`;
             });
 
             printHTML += `
-                <div style="margin-top: 30px; text-align: center; font-size: 10px; color: #94a3b8; border-t: 1px solid #e2e8f0; padding-top: 10px;">
-                    Dokumen ini dijana secara automatik daripada Sistem Carta Salasilah Interaktif Keturunan Hj. Abdullah & Hjh. Salbiah
-                </div>
-                <script>
-                    window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                        }, 500);
-                    };
-                <\/script>
+            <script>
+                window.onload = function() { window.print(); }
+            <\/script>
             </body>
             </html>
             `;
 
             printWindow.document.write(printHTML);
             printWindow.document.close();
-            showToast("Menjana laporan cetakan PDF...");
         }
 
         function exportDataCSV() {
-            closeModal('exportModal');
-
             let csvRows = [];
-            csvRows.push(["Cabang", "Generasi/Peranan", "Kod Rujukan", "Nama Penuh", "Tarikh Lahir", "Tarikh Nikah", "Status", "Tarikh Meninggal", "Sebab Kematian", "Catatan / Nota"]);
+            csvRows.push(["Cabang", "Kod", "Hubungan", "Nama Penuh", "Umur/Status", "Tarikh Lahir", "Tarikh Nikah", "Tarikh Meninggal", "Sebab Kematian", "Nota"]);
 
             familyTreeData.forEach(anak => {
-                csvRows.push([anak.branch, "Anak", anak.code, anak.name, anak.dob || "", "", anak.status, anak.dod || "", anak.causeOfDeath || "", anak.notes || ""]);
+                csvRows.push([anak.branch, anak.code, "Anak Utama", getFormattedNameWithAgePlain(anak), anak.status, anak.dob || '', '', anak.dod || '', anak.causeOfDeath || '', anak.notes || '']);
+
                 if (anak.spouse) {
-                    csvRows.push([anak.branch, "Anak Menantu", anak.spouse.code || "", anak.spouse.name, anak.spouse.dob || "", anak.spouse.marriageDate || "", anak.spouse.status || "", anak.spouse.dod || "", anak.spouse.causeOfDeath || "", ""]);
+                    csvRows.push([anak.branch, anak.spouse.code || '', "Anak Menantu", getFormattedNameWithAgePlain(anak.spouse), anak.spouse.status || 'Bernikah', anak.spouse.dob || '', anak.spouse.marriageDate || '', anak.spouse.dod || '', anak.spouse.causeOfDeath || '', '']);
                 }
 
-                anak.children.forEach(cucu => {
-                    csvRows.push([anak.branch, "Cucu", cucu.code || "", cucu.name, cucu.dob || "", "", cucu.status, cucu.dod || "", cucu.causeOfDeath || "", cucu.notes || ""]);
-                    if (cucu.spouse) {
-                        csvRows.push([anak.branch, "Cucu Menantu", cucu.spouse.code || "", cucu.spouse.name, cucu.spouse.dob || "", cucu.spouse.marriageDate || "", cucu.spouse.status || "", cucu.spouse.dod || "", cucu.spouse.causeOfDeath || "", ""]);
-                    }
+                if (anak.children) {
+                    anak.children.forEach(cucu => {
+                        csvRows.push([anak.branch, cucu.code || '', "Cucu", getFormattedNameWithAgePlain(cucu), cucu.status, cucu.dob || '', cucu.marriageDate || '', cucu.dod || '', cucu.causeOfDeath || '', cucu.notes || '']);
 
-                    if (cucu.children) {
-                        cucu.children.forEach(cicit => {
-                            csvRows.push([anak.branch, "Cicit", cicit.code || "", cicit.name, cicit.dob || "", "", cicit.status, cicit.dod || "", cicit.causeOfDeath || "", cicit.notes || ""]);
-                        });
-                    }
-                });
+                        if (cucu.spouse) {
+                            csvRows.push([anak.branch, cucu.spouse.code || '', "Cucu Menantu", getFormattedNameWithAgePlain(cucu.spouse), cucu.spouse.status || 'Bernikah', cucu.spouse.dob || '', cucu.spouse.marriageDate || '', cucu.spouse.dod || '', '', '']);
+                        }
+
+                        if (cucu.children) {
+                            cucu.children.forEach(cicit => {
+                                csvRows.push([anak.branch, cicit.code || '', "Cicit", getFormattedNameWithAgePlain(cicit), cicit.status, cicit.dob || '', '', cicit.dod || '', cicit.causeOfDeath || '', cicit.notes || '']);
+                            });
+                        }
+                    });
+                }
             });
 
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(",")).join("\n");
-            
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Senarai_Keluarga_Hj_Abdullah_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.setAttribute("download", "salasilah_keluarga_996.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            showToast("Senarai ahli keluarga berjaya dimuat turun sebagai fail CSV/Excel!");
+            closeModal('exportModal');
+            showToast("Fail CSV / Excel berjaya dimuat turun!");
         }
 
         function showToast(text) {
@@ -1804,7 +1880,7 @@
             toast.classList.remove('hidden');
             setTimeout(() => {
                 toast.classList.add('hidden');
-            }, 3500);
+            }, 3000);
         }
     </script>
 </body>
