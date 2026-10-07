@@ -68,11 +68,11 @@
     <!-- Modal Password Authentication Lock Screen -->
     <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-fade-in">
-            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
             <div>
-                <h2 class="text-xl font-black text-slate-900">Kawalan Keselamatan</h2>
+                <h2 class="text-xl font-black text-slate-900">Kawalan Keselamatan Salasilah</h2>
                 <p class="text-xs text-slate-500 mt-1">Sila masukkan kata laluan untuk mengakses pangkalan data keluarga.</p>
             </div>
 
@@ -80,8 +80,8 @@
                 <div>
                     <div class="relative">
                         <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="password" id="passwordInput" placeholder="TL996 (Ahli) / ADMINTL996 (Admin)" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                        <input type="password" id="passwordInput" placeholder="TL996 (Ahli) / ADMINTL996 (Admin)" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
+                        <button type="button" onclick="togglePasswordVisibility('passwordInput', 'togglePassIcon')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                             <i id="togglePassIcon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -95,10 +95,12 @@
                 </button>
             </form>
             
-            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-left text-[11px] text-slate-500 space-y-1">
-                <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-amber-500 mr-1"></i> Jenis Akses:</p>
-                <p>• <b>Ahli Keluarga:</b> Kata laluan <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">TL996</code></p>
-                <p>• <b>Pentadbir (Admin):</b> Kata laluan <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">ADMINTL996</code></p>
+            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-left text-[11px] text-slate-600 space-y-1.5">
+                <p class="font-bold text-slate-800 flex items-center gap-1">
+                    <i class="fa-solid fa-circle-info text-amber-500"></i> Paraks Akses Pengguna:
+                </p>
+                <p>• <b>Ahli Keluarga:</b> <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">TL996</code> (Boleh lihat, tambah &amp; kemaskini data. Tidak boleh memadam).</p>
+                <p>• <b>Pentadbir (Admin):</b> <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono font-bold">ADMINTL996</code> (Akses penuh termasuk padam ahli &amp; tetapan Google Sheets API).</p>
             </div>
         </div>
     </div>
@@ -114,23 +116,25 @@
                 <i class="fa-solid fa-user-shield"></i>
             </div>
             <div>
-                <h3 class="text-base font-extrabold text-slate-900">Akses ADMINISTRATIVE</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Sila masukkan kata laluan Pentadbir untuk membuka tetapan API &amp; JSON.</p>
+                <h3 class="text-base font-extrabold text-slate-900">Akses Administrative</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Masukkan kata laluan Pentadbir untuk kawalan penuh (Google Sheets &amp; Pemadaman).</p>
             </div>
 
             <form onsubmit="verifyAdminPassword(event)" class="space-y-3">
-                <input type="password" id="adminPasswordInput" placeholder="ADMINTL996" required class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
+                <div class="relative">
+                    <input type="password" id="adminPasswordInput" placeholder="ADMINTL996" required class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none text-center font-mono font-bold text-slate-800 tracking-wider text-sm">
+                </div>
                 <p id="adminAuthError" class="text-rose-600 font-bold text-xs hidden flex items-center justify-center gap-1">
                     <i class="fa-solid fa-circle-exclamation"></i> Kata laluan Admin salah!
                 </p>
                 <button type="submit" class="w-full py-2.5 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-xl transition text-xs shadow-sm">
-                    Buka Pentadbiran
+                    Sahkan Akses Pentadbir
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Header -->
     <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-900 text-white shadow-lg sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex items-center space-x-3.5">
@@ -153,9 +157,9 @@
             
             <!-- Management & Access Controls -->
             <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
-                <button onclick="accessAdminPanel()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-md">
+                <button id="btnAdminPanel" onclick="accessAdminPanel()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-md">
                     <i class="fa-solid fa-user-gear"></i>
-                    <span>ADMINISTRATIVE</span>
+                    <span>PENTADBIRAN (ADMIN)</span>
                 </button>
                 <button onclick="openAddMemberModal()" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-user-plus text-amber-300"></i>
@@ -276,14 +280,14 @@
 
         <!-- VIEW 3: STATISTIK & RINGKASAN -->
         <div id="view-stats" class="hidden animate-fade-in space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="statsOverviewCards">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="statsOverviewCards">
                 <!-- Javascript populates summary statistics -->
             </div>
 
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-chart-column text-emerald-600"></i>
-                    <span>Pecahan Keturunan Mengikut Cabang Anak</span>
+                    <span>Pecahan Keturunan Mengikut Cabang Anak (Generasi 1-5+)</span>
                 </h3>
                 <div id="statsBranchList" class="space-y-3">
                     <!-- Javascript populates branch statistics -->
@@ -295,7 +299,7 @@
 
     <!-- Modal ADMINISTRATIVE (Admin Panel) -->
     <div id="adminPanelModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative border border-slate-100 space-y-5 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative border border-slate-100 space-y-5 max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('adminPanelModal')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
@@ -306,10 +310,10 @@
                 </div>
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                        <span>Panel ADMINISTRATIVE</span>
+                        <span>Panel Administrative &amp; Google Sheets API</span>
                         <span class="bg-rose-100 text-rose-800 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase">ADMIN</span>
                     </h3>
-                    <p class="text-xs text-slate-500">Kawalan pangkalan data Google Sheets API, Muat Naik / Muat Turun fail JSON, dan tetapan sistem.</p>
+                    <p class="text-xs text-slate-500">Tetapan pengkalan data Google Sheets API, Salinan Sandaran JSON &amp; Arahan Setup Script.</p>
                 </div>
             </div>
 
@@ -317,7 +321,7 @@
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
                 <h4 class="text-xs font-extrabold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-table text-emerald-600"></i>
-                    <span>Tetapan Google Sheets API (Google Apps Script)</span>
+                    <span>Tetapan Web App URL (Google Apps Script)</span>
                 </h4>
                 
                 <div>
@@ -340,14 +344,49 @@
                 </div>
             </div>
 
-            <!-- Section 2: Backup & Restore JSON -->
+            <!-- Section 2: Instructions for Google Apps Script Code -->
+            <div class="bg-teal-50/70 border border-teal-200 rounded-2xl p-4 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold text-teal-900 flex items-center gap-2">
+                        <i class="fa-solid fa-code text-teal-600"></i>
+                        <span>Kod Backend Google Apps Script (Untuk Pangkalan Data Google Sheets)</span>
+                    </h4>
+                    <button onclick="copyAppsScriptCode()" class="text-[10px] bg-teal-700 hover:bg-teal-800 text-white font-bold px-2.5 py-1 rounded-lg transition">
+                        <i class="fa-solid fa-copy mr-1"></i> Salin Kod Apps Script
+                    </button>
+                </div>
+                <p class="text-[11px] text-teal-800">
+                    Buka Google Sheet anda &gt; Klik <b>Extensions</b> &gt; <b>Apps Script</b> &gt; Tampal kod di bawah &gt; Klik <b>Deploy</b> &gt; <b>New deployment</b> (pilih Web App, <i>Who has access: Anyone</i>).
+                </p>
+                <textarea id="appsScriptCodeBlock" readonly rows="5" class="w-full p-2.5 bg-slate-900 text-teal-300 font-mono text-[10px] rounded-xl focus:outline-none select-all">
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getRange(1, 1).getValue();
+  if (!data) return ContentService.createTextOutput(JSON.stringify({ status: "success", data: [] })).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", data: JSON.parse(data) })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    if (contents.action === "saveData" && contents.data) {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      sheet.getRange(1, 1).setValue(JSON.stringify(contents.data));
+      return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+                </textarea>
+            </div>
+
+            <!-- Section 3: Backup & Restore JSON -->
             <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 space-y-3">
                 <h4 class="text-xs font-extrabold text-amber-950 flex items-center gap-2">
                     <i class="fa-solid fa-file-code text-amber-600"></i>
                     <span>Pengurusan Fail Data JSON</span>
                 </h4>
-                <p class="text-[11px] text-amber-900">Gunakan fungsi ini untuk memuat turun salinan sandaran (backup) atau memuat naik data keluarga baharu dari fail JSON.</p>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <button onclick="exportDataJSON()" class="p-3 bg-white hover:bg-amber-100/50 border border-amber-300 rounded-xl transition flex items-center gap-3 text-left shadow-sm">
                         <div class="w-9 h-9 bg-amber-500 text-slate-950 rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
@@ -372,7 +411,7 @@
                 </div>
             </div>
 
-            <!-- Section 3: Diagnostic Info -->
+            <!-- Section 4: Diagnostic Info -->
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs space-y-1.5">
                 <p class="font-bold text-slate-800"><i class="fa-solid fa-database mr-1 text-slate-500"></i> Ringkasan Storan Data:</p>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-slate-600 pt-1">
@@ -381,12 +420,12 @@
                         <strong class="text-slate-800 text-sm" id="adminAnakCount">9</strong>
                     </div>
                     <div class="bg-white p-2 rounded-lg border border-slate-200">
-                        <span class="block text-slate-400">Status Penyuntingan:</span>
-                        <strong class="text-emerald-700 text-sm">Aktif</strong>
+                        <span class="block text-slate-400">Generasi Disokong:</span>
+                        <strong class="text-emerald-700 text-sm">Anak, Cucu, Cicit, Piut, Piut-Cicit</strong>
                     </div>
                     <div class="bg-white p-2 rounded-lg border border-slate-200 col-span-2 sm:col-span-1">
                         <span class="block text-slate-400">Akses Semasa:</span>
-                        <strong class="text-amber-800 text-sm">PENTADBIR (ADMIN)</strong>
+                        <strong class="text-amber-800 text-sm" id="adminRoleDisplay">PENTADBIR (ADMIN)</strong>
                     </div>
                 </div>
             </div>
@@ -474,17 +513,19 @@
 
                 <!-- Generation Level Select (Only active when adding new) -->
                 <div id="levelSelectContainer">
-                    <label class="block font-bold text-slate-700 mb-1">Peringkat / Tahap Ahli *</label>
+                    <label class="block font-bold text-slate-700 mb-1">Peringkat / Generasi Ahli *</label>
                     <select id="formTargetLevel" onchange="updateFormParentOptions()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         <option value="CUCU">Cucu (Generasi Kedua)</option>
                         <option value="CICIT">Cicit (Generasi Ketiga)</option>
+                        <option value="PIUT">Piut (Generasi Keempat)</option>
+                        <option value="PIUT_CICIT">Piut-Cicit / Onang-onang (Generasi Kelima)</option>
                         <option value="PASANGAN">Pasangan / Menantu</option>
                     </select>
                 </div>
 
                 <!-- Target Parent Selector -->
                 <div id="parentSelectContainer">
-                    <label class="block font-bold text-slate-700 mb-1" id="formParentLabel">Pilih Ibu / Bapa (Ahli Anak) *</label>
+                    <label class="block font-bold text-slate-700 mb-1" id="formParentLabel">Pilih Ibu / Bapa (Ahli Utama) *</label>
                     <select id="formParentSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         <!-- Dynamically filled -->
                     </select>
@@ -553,7 +594,7 @@
     <footer class="bg-white border-t border-slate-200 mt-12 py-6">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
             <p class="font-bold text-slate-700">Keturunan Haji Abdullah bin Haji Ahmad dan Hajjah Salbiah binti Jab</p>
-            <p>Tarikh versi terbaru dokumen: <span class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-700 font-bold">2026</span> | Microsoft EXCEL file: <i>family tree (996 tanah liat)</i></p>
+            <p>Tarikh versi terbaru dokumen: <span class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-700 font-bold">2026</span> | Generasi 1-5+ Ready</p>
             <p>Kemaskini &amp; Hubungi: Ir. Haji Abd. Rashid bin Haji Hashim (016-318-5990 / achid1963@gmail.com)</p>
         </div>
     </footer>
@@ -736,6 +777,7 @@
         function openAdminPanelModal() {
             document.getElementById('googleScriptUrlInput').value = googleScriptUrl;
             document.getElementById('adminAnakCount').innerText = familyTreeData.length;
+            document.getElementById('adminRoleDisplay').innerText = currentUserRole === 'ADMIN' ? 'PENTADBIR (ADMIN)' : 'AHLI KELUARGA';
             document.getElementById('adminPanelModal').classList.remove('hidden');
         }
 
@@ -743,16 +785,16 @@
             const badge = document.getElementById('roleBadge');
             if (currentUserRole === 'ADMIN') {
                 badge.className = "bg-rose-500 text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1";
-                badge.innerHTML = `<i class="fa-solid fa-user-shield"></i> PENTADBIR`;
+                badge.innerHTML = `<i class="fa-solid fa-user-shield"></i> PENTADBIR (Hak Penuh)`;
             } else {
                 badge.className = "bg-amber-400 text-amber-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm";
-                badge.innerHTML = `Ahli Keluarga`;
+                badge.innerHTML = `<i class="fa-solid fa-users"></i> Ahli Keluarga (Boleh Tambah/Edit)`;
             }
         }
 
-        function togglePasswordVisibility() {
-            const input = document.getElementById('passwordInput');
-            const icon = document.getElementById('togglePassIcon');
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.className = 'fa-solid fa-eye-slash';
@@ -769,6 +811,13 @@
             document.getElementById('authErrorMsg').classList.add('hidden');
             document.getElementById('authModal').classList.remove('hidden');
             showToast("Aplikasi dikunci.");
+        }
+
+        function copyAppsScriptCode() {
+            const code = document.getElementById('appsScriptCodeBlock');
+            code.select();
+            document.execCommand('copy');
+            showToast("Kod Google Apps Script berjaya disalin!");
         }
 
         // =========================================================
@@ -936,43 +985,84 @@
             renderStatsView();
         }
 
-        function updateMetricsHeader() {
+        // Calculate Totals Across 5 Generations
+        function countFamilyGenerations() {
             let totalAnak = familyTreeData.length;
             let totalAnakMenantu = familyTreeData.filter(a => a.spouse).length;
-            
             let totalCucu = 0;
             let totalCucuMenantu = 0;
             let totalCicit = 0;
+            let totalCicitMenantu = 0;
+            let totalPiut = 0;
+            let totalPiutMenantu = 0;
+            let totalPiutCicit = 0;
 
             familyTreeData.forEach(a => {
-                totalCucu += a.children ? a.children.length : 0;
                 if (a.children) {
+                    totalCucu += a.children.length;
                     a.children.forEach(c => {
                         if (c.spouse) totalCucuMenantu++;
-                        if (c.children) totalCicit += c.children.length;
+                        if (c.children) {
+                            totalCicit += c.children.length;
+                            c.children.forEach(cc => {
+                                if (cc.spouse) totalCicitMenantu++;
+                                if (cc.children) {
+                                    totalPiut += cc.children.length;
+                                    cc.children.forEach(p => {
+                                        if (p.spouse) totalPiutMenantu++;
+                                        if (p.children) {
+                                            totalPiutCicit += p.children.length;
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
                 }
             });
 
-            let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
+            const grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + 
+                               totalCicit + totalCicitMenantu + totalPiut + totalPiutMenantu + totalPiutCicit;
+
+            return {
+                totalAnak, totalAnakMenantu,
+                totalCucu, totalCucuMenantu,
+                totalCicit, totalCicitMenantu,
+                totalPiut, totalPiutMenantu,
+                totalPiutCicit,
+                grandTotal
+            };
+        }
+
+        function updateMetricsHeader() {
+            const g = countFamilyGenerations();
 
             document.getElementById('metricsBar').innerHTML = `
-                <span class="bg-emerald-900/10 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span class="bg-emerald-900/10 text-emerald-800 border border-emerald-300 px-3 py-1 rounded-full flex items-center gap-1.5">
                     <i class="fa-solid fa-users text-emerald-600"></i>
-                    <span><strong>${grandTotal}</strong> Jumlah Ahli</span>
+                    <span><strong>${g.grandTotal}</strong> Ahli Keseluruhan</span>
                 </span>
-                <span class="bg-amber-900/10 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span class="bg-amber-900/10 text-amber-900 border border-amber-300 px-3 py-1 rounded-full flex items-center gap-1.5">
                     <i class="fa-solid fa-child text-amber-600"></i>
-                    <span><strong>${totalAnak}</strong> Anak</span>
+                    <span><strong>${g.totalAnak}</strong> Anak</span>
                 </span>
-                <span class="bg-blue-900/10 text-blue-900 border border-blue-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span class="bg-blue-900/10 text-blue-900 border border-blue-300 px-3 py-1 rounded-full flex items-center gap-1.5">
                     <i class="fa-solid fa-people-group text-blue-600"></i>
-                    <span><strong>${totalCucu}</strong> Cucu</span>
+                    <span><strong>${g.totalCucu}</strong> Cucu</span>
                 </span>
-                <span class="bg-purple-900/10 text-purple-900 border border-purple-300 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span class="bg-purple-900/10 text-purple-900 border border-purple-300 px-3 py-1 rounded-full flex items-center gap-1.5">
                     <i class="fa-solid fa-baby text-purple-600"></i>
-                    <span><strong>${totalCicit}</strong> Cicit</span>
+                    <span><strong>${g.totalCicit}</strong> Cicit</span>
                 </span>
+                <span class="bg-rose-900/10 text-rose-900 border border-rose-300 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-children text-rose-600"></i>
+                    <span><strong>${g.totalPiut}</strong> Piut</span>
+                </span>
+                ${g.totalPiutCicit > 0 ? `
+                <span class="bg-indigo-900/10 text-indigo-900 border border-indigo-300 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-heart text-indigo-600"></i>
+                    <span><strong>${g.totalPiutCicit}</strong> Piut-Cicit</span>
+                </span>` : ''}
             `;
         }
 
@@ -1012,15 +1102,8 @@
                 if (filterBranch !== 'ALL' && item.branch.toString() !== filterBranch) return false;
                 if (!searchQuery) return true;
 
-                const matchesParent = item.name.toLowerCase().includes(searchQuery) || (item.title && item.title.toLowerCase().includes(searchQuery));
-                const matchesSpouse = item.spouse && item.spouse.name.toLowerCase().includes(searchQuery);
-                const matchesCucu = item.children && item.children.some(c => 
-                    c.name.toLowerCase().includes(searchQuery) || 
-                    (c.spouse && c.spouse.name.toLowerCase().includes(searchQuery)) ||
-                    (c.children && c.children.some(cc => cc.name.toLowerCase().includes(searchQuery)))
-                );
-
-                return matchesParent || matchesSpouse || matchesCucu;
+                const searchTarget = JSON.stringify(item).toLowerCase();
+                return searchTarget.includes(searchQuery);
             });
 
             if (filteredData.length === 0) {
@@ -1130,6 +1213,7 @@
                 </div>
             ` : '';
 
+            // Render Cicit Level
             let cicitList = cucu.children && cucu.children.length > 0 ? `
                 <div class="mt-3 pt-2 border-t border-dashed border-slate-200">
                     <div class="flex items-center justify-between mb-1.5">
@@ -1141,29 +1225,8 @@
                             + Tambah Cicit
                         </button>
                     </div>
-                    <div class="space-y-1.5 pl-1">
-                        ${cucu.children.map(cicit => `
-                            <div class="bg-purple-50/80 rounded-xl p-2 border border-purple-100 text-xs flex items-center justify-between">
-                                <div>
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        <span class="font-bold text-slate-800">${getFormattedNameWithAge(cicit)}</span>
-                                        <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code || ''}</span>
-                                        ${cicit.status === 'Meninggal Dunia' ? `<span class="bg-rose-100 text-rose-700 text-[9px] px-1 rounded font-bold">Meninggal</span>` : ''}
-                                    </div>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob || '—'} ${cicit.dod ? `| Dod: ${cicit.dod}` : ''}</p>
-                                    ${cicit.causeOfDeath ? `<p class="text-[9px] text-rose-800">Sebab: ${cicit.causeOfDeath}</p>` : ''}
-                                    ${cicit.notes ? `<p class="text-[10px] text-purple-800 italic mt-0.5"><i class="fa-solid fa-scale-balanced mr-1"></i>${cicit.notes}</p>` : ''}
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <button onclick="openEditMemberModal('${cicit.id}')" class="text-slate-400 hover:text-emerald-600 p-1" title="Kemaskini cicit">
-                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                    </button>
-                                    <button onclick="deleteMember('${cicit.id}', 'CICIT')" class="text-slate-400 hover:text-rose-600 p-1" title="Padam cicit">
-                                        <i class="fa-solid fa-trash text-xs"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="space-y-2 pl-1">
+                        ${cucu.children.map(cicit => renderCicitCard(cicit)).join('')}
                     </div>
                 </div>
             ` : `
@@ -1173,6 +1236,10 @@
                     </button>
                 </div>
             `;
+
+            const deleteBtnHtml = currentUserRole === 'ADMIN' 
+                ? `<button onclick="deleteMember('${cucu.id}', 'CUCU')" class="text-slate-400 hover:text-rose-600 p-1 opacity-80 group-hover:opacity-100" title="Padam cucu"><i class="fa-solid fa-trash text-xs"></i></button>` 
+                : '';
 
             return `
                 <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 card-shadow hover:bg-white transition relative group">
@@ -1188,14 +1255,101 @@
                             <button onclick="openEditMemberModal('${cucu.id}')" class="text-slate-400 hover:text-emerald-600 p-1 opacity-80 group-hover:opacity-100" title="Edit cucu">
                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
                             </button>
-                            <button onclick="deleteMember('${cucu.id}', 'CUCU')" class="text-slate-400 hover:text-rose-600 p-1 opacity-80 group-hover:opacity-100" title="Padam cucu">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
+                            ${deleteBtnHtml}
                         </div>
                     </div>
                     ${cucu.notes ? `<p class="text-[11px] text-slate-600 bg-white p-2 rounded-xl border border-slate-200 mt-2">${cucu.notes}</p>` : ''}
                     ${spouseInfo}
                     ${cicitList}
+                </div>
+            `;
+        }
+
+        function renderCicitCard(cicit) {
+            const piutList = cicit.children && cicit.children.length > 0 ? `
+                <div class="mt-2 pt-1.5 border-t border-purple-200/60 pl-2 space-y-1.5">
+                    <div class="flex items-center justify-between text-[10px] font-bold text-rose-800">
+                        <span><i class="fa-solid fa-children text-rose-600 mr-1"></i>Piut [${cicit.children.length}]</span>
+                        <button onclick="openAddMemberModal('PIUT', '${cicit.id}')" class="text-rose-700 hover:text-rose-900 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">+ Piut</button>
+                    </div>
+                    ${cicit.children.map(piut => renderPiutCard(piut)).join('')}
+                </div>
+            ` : `
+                <div class="mt-1 text-right">
+                    <button onclick="openAddMemberModal('PIUT', '${cicit.id}')" class="text-[9px] text-rose-700 hover:text-rose-900 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">+ Tambah Piut</button>
+                </div>
+            `;
+
+            const deleteBtnHtml = currentUserRole === 'ADMIN'
+                ? `<button onclick="deleteMember('${cicit.id}', 'CICIT')" class="text-slate-400 hover:text-rose-600 p-1" title="Padam cicit"><i class="fa-solid fa-trash text-xs"></i></button>`
+                : '';
+
+            return `
+                <div class="bg-purple-50/80 rounded-xl p-2.5 border border-purple-100 text-xs">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-bold text-slate-800">${getFormattedNameWithAge(cicit)}</span>
+                                <span class="font-mono text-[10px] text-purple-700 font-black">${cicit.code || ''}</span>
+                                ${cicit.status === 'Meninggal Dunia' ? `<span class="bg-rose-100 text-rose-700 text-[9px] px-1 rounded font-bold">Meninggal</span>` : ''}
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Lahir: ${cicit.dob || '—'} ${cicit.dod ? `| Dod: ${cicit.dod}` : ''}</p>
+                            ${cicit.causeOfDeath ? `<p class="text-[9px] text-rose-800">Sebab: ${cicit.causeOfDeath}</p>` : ''}
+                            ${cicit.notes ? `<p class="text-[10px] text-purple-800 italic mt-0.5"><i class="fa-solid fa-scale-balanced mr-1"></i>${cicit.notes}</p>` : ''}
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="openEditMemberModal('${cicit.id}')" class="text-slate-400 hover:text-emerald-600 p-1" title="Kemaskini cicit">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            </button>
+                            ${deleteBtnHtml}
+                        </div>
+                    </div>
+                    ${piutList}
+                </div>
+            `;
+        }
+
+        function renderPiutCard(piut) {
+            const piutCicitList = piut.children && piut.children.length > 0 ? `
+                <div class="mt-1.5 pt-1 border-t border-rose-200/60 pl-2 space-y-1">
+                    <div class="text-[9px] font-bold text-indigo-800 flex items-center justify-between">
+                        <span><i class="fa-solid fa-heart text-indigo-600 mr-1"></i>Piut-Cicit [${piut.children.length}]</span>
+                        <button onclick="openAddMemberModal('PIUT_CICIT', '${piut.id}')" class="text-indigo-700 hover:text-indigo-900 bg-indigo-50 px-1 rounded border border-indigo-200">+ Piut-Cicit</button>
+                    </div>
+                    ${piut.children.map(pc => `
+                        <div class="bg-indigo-50 rounded p-1.5 border border-indigo-100 text-[10px] flex items-center justify-between">
+                            <span><b>${getFormattedNameWithAgePlain(pc)}</b> ${pc.code ? `(${pc.code})` : ''}</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="openEditMemberModal('${pc.id}')" class="text-slate-400 hover:text-emerald-600"><i class="fa-solid fa-pen-to-square"></i></button>
+                                ${currentUserRole === 'ADMIN' ? `<button onclick="deleteMember('${pc.id}', 'PIUT_CICIT')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : `
+                <div class="mt-1 text-right">
+                    <button onclick="openAddMemberModal('PIUT_CICIT', '${piut.id}')" class="text-[9px] text-indigo-700 hover:text-indigo-900 bg-indigo-50 px-1 rounded border border-indigo-200">+ Piut-Cicit</button>
+                </div>
+            `;
+
+            const deleteBtnHtml = currentUserRole === 'ADMIN'
+                ? `<button onclick="deleteMember('${piut.id}', 'PIUT')" class="text-slate-400 hover:text-rose-600 p-0.5" title="Padam piut"><i class="fa-solid fa-trash text-[10px]"></i></button>`
+                : '';
+
+            return `
+                <div class="bg-rose-50/80 rounded-lg p-2 border border-rose-100 text-[11px]">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-slate-800">${getFormattedNameWithAge(piut)}</span>
+                            <span class="font-mono text-[9px] text-rose-700 font-bold ml-1">${piut.code || ''}</span>
+                            <p class="text-[9px] text-slate-500">Lahir: ${piut.dob || '—'}</p>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="openEditMemberModal('${piut.id}')" class="text-slate-400 hover:text-emerald-600 p-0.5"><i class="fa-solid fa-pen-to-square text-[10px]"></i></button>
+                            ${deleteBtnHtml}
+                        </div>
+                    </div>
+                    ${piutCicitList}
                 </div>
             `;
         }
@@ -1223,6 +1377,21 @@
                             if (cucu.children) {
                                 cucu.children.forEach(cicit => {
                                     allMembers.push({ ...cicit, role: 'Cicit', branch: anak.branch, codeDisplay: cicit.code });
+                                    if (cicit.spouse) {
+                                        allMembers.push({ ...cicit.spouse, id: cicit.spouse.id || (cicit.id + '_spouse'), role: 'Cicit Menantu', branch: anak.branch, codeDisplay: cicit.spouse.code });
+                                    }
+
+                                    if (cicit.children) {
+                                        cicit.children.forEach(piut => {
+                                            allMembers.push({ ...piut, role: 'Piut', branch: anak.branch, codeDisplay: piut.code });
+
+                                            if (piut.children) {
+                                                piut.children.forEach(pc => {
+                                                    allMembers.push({ ...pc, role: 'Piut-Cicit', branch: anak.branch, codeDisplay: pc.code });
+                                                });
+                                            }
+                                        });
+                                    }
                                 });
                             }
                         });
@@ -1245,6 +1414,8 @@
                 if (member.role === 'Cucu') badgeColor = "bg-blue-100 text-blue-800";
                 if (member.role === 'Cucu Menantu') badgeColor = "bg-indigo-100 text-indigo-800";
                 if (member.role === 'Cicit') badgeColor = "bg-purple-100 text-purple-800";
+                if (member.role === 'Piut') badgeColor = "bg-rose-100 text-rose-800";
+                if (member.role === 'Piut-Cicit') badgeColor = "bg-amber-100 text-amber-900";
 
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl border border-slate-200 card-shadow flex flex-col justify-between space-y-3 cursor-pointer hover:border-emerald-500 transition";
@@ -1278,51 +1449,42 @@
             const overviewContainer = document.getElementById('statsOverviewCards');
             const branchContainer = document.getElementById('statsBranchList');
 
-            let totalAnak = familyTreeData.length;
-            let totalAnakMenantu = familyTreeData.filter(a => a.spouse).length;
-            let totalCucu = 0;
-            let totalCucuMenantu = 0;
-            let totalCicit = 0;
-
-            familyTreeData.forEach(a => {
-                if (a.children) {
-                    totalCucu += a.children.length;
-                    a.children.forEach(c => {
-                        if (c.spouse) totalCucuMenantu++;
-                        if (c.children) totalCicit += c.children.length;
-                    });
-                }
-            });
-
-            let grandTotal = totalAnak + totalAnakMenantu + totalCucu + totalCucuMenantu + totalCicit;
+            const g = countFamilyGenerations();
 
             overviewContainer.innerHTML = `
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-emerald-100 text-emerald-700 rounded-2xl"><i class="fa-solid fa-users text-2xl"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-emerald-100 text-emerald-700 rounded-2xl"><i class="fa-solid fa-users text-xl"></i></div>
                     <div>
-                        <p class="text-xs text-slate-500 font-medium">Jumlah Keseluruhan</p>
-                        <p class="text-2xl font-black text-slate-800">${grandTotal} Orang</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Keseluruhan</p>
+                        <p class="text-xl font-black text-slate-800">${g.grandTotal} Orang</p>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-amber-100 text-amber-700 rounded-2xl"><i class="fa-solid fa-user-group text-2xl"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-amber-100 text-amber-700 rounded-2xl"><i class="fa-solid fa-user-group text-xl"></i></div>
                     <div>
-                        <p class="text-xs text-slate-500 font-medium">Anak & Menantu</p>
-                        <p class="text-xl font-black text-slate-800">${totalAnak} Anak / ${totalAnakMenantu} Menantu</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Gen 1: Anak</p>
+                        <p class="text-lg font-black text-slate-800">${g.totalAnak} (${g.totalAnakMenantu} Menantu)</p>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-blue-100 text-blue-700 rounded-2xl"><i class="fa-solid fa-people-roof text-2xl"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-blue-100 text-blue-700 rounded-2xl"><i class="fa-solid fa-people-roof text-xl"></i></div>
                     <div>
-                        <p class="text-xs text-slate-500 font-medium">Cucu & Menantu</p>
-                        <p class="text-xl font-black text-slate-800">${totalCucu} Cucu / ${totalCucuMenantu} Menantu</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Gen 2: Cucu</p>
+                        <p class="text-lg font-black text-slate-800">${g.totalCucu} (${g.totalCucuMenantu} Menantu)</p>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                    <div class="p-3.5 bg-purple-100 text-purple-700 rounded-2xl"><i class="fa-solid fa-baby text-2xl"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-purple-100 text-purple-700 rounded-2xl"><i class="fa-solid fa-baby text-xl"></i></div>
                     <div>
-                        <p class="text-xs text-slate-500 font-medium">Generasi Cicit</p>
-                        <p class="text-2xl font-black text-slate-800">${totalCicit} Cicit</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Gen 3: Cicit</p>
+                        <p class="text-xl font-black text-slate-800">${g.totalCicit} Orang</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-rose-100 text-rose-700 rounded-2xl"><i class="fa-solid fa-children text-xl"></i></div>
+                    <div>
+                        <p class="text-[11px] text-slate-500 font-medium">Gen 4-5: Piut &amp; Piut-Cicit</p>
+                        <p class="text-lg font-black text-slate-800">${g.totalPiut} / ${g.totalPiutCicit}</p>
                     </div>
                 </div>
             `;
@@ -1331,9 +1493,19 @@
             familyTreeData.forEach(anak => {
                 const cucuArr = anak.children || [];
                 const cucuCount = cucuArr.length;
-                const cucuMenantuCount = cucuArr.filter(c => c.spouse).length;
-                const cicitCount = cucuArr.reduce((acc, c) => acc + (c.children ? c.children.length : 0), 0);
-                const totalBranch = 1 + (anak.spouse ? 1 : 0) + cucuCount + cucuMenantuCount + cicitCount;
+                let cicitCount = 0;
+                let piutCount = 0;
+
+                cucuArr.forEach(c => {
+                    if (c.children) {
+                        cicitCount += c.children.length;
+                        c.children.forEach(cc => {
+                            if (cc.children) piutCount += cc.children.length;
+                        });
+                    }
+                });
+
+                const totalBranch = 1 + (anak.spouse ? 1 : 0) + cucuCount + cicitCount + piutCount;
 
                 const item = document.createElement('div');
                 item.className = "bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4";
@@ -1354,10 +1526,10 @@
                             <strong>${cucuCount}</strong> Cucu
                         </span>
                         <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 font-semibold text-slate-700">
-                            <strong>${cucuMenantuCount}</strong> Cucu Menantu
+                            <strong>${cicitCount}</strong> Cicit
                         </span>
                         <span class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 font-semibold text-slate-700">
-                            <strong>${cicitCount}</strong> Cicit
+                            <strong>${piutCount}</strong> Piut
                         </span>
                         <span class="bg-emerald-100 text-emerald-900 px-3 py-1.5 rounded-xl font-bold border border-emerald-200">
                             Jumlah: ${totalBranch} Orang
@@ -1388,6 +1560,16 @@
                         if (cucu.children) {
                             for (let cicit of cucu.children) {
                                 if (cicit.id === id) return { item: cicit, level: 'CICIT' };
+                                if (cicit.children) {
+                                    for (let piut of cicit.children) {
+                                        if (piut.id === id) return { item: piut, level: 'PIUT' };
+                                        if (piut.children) {
+                                            for (let pc of piut.children) {
+                                                if (pc.id === id) return { item: pc, level: 'PIUT_CICIT' };
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1505,6 +1687,44 @@
                         });
                     }
                 });
+            } else if (level === 'PIUT') {
+                parentLabel.innerText = "Pilih Ibu / Bapa (Ahli Cicit) *";
+                familyTreeData.forEach(anak => {
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) {
+                                cucu.children.forEach(cicit => {
+                                    const opt = document.createElement('option');
+                                    opt.value = cicit.id;
+                                    opt.text = `${cicit.name} [Cucu: ${cucu.name}]`;
+                                    if (selectedParentId && cicit.id === selectedParentId) opt.selected = true;
+                                    parentSelect.appendChild(opt);
+                                });
+                            }
+                        });
+                    }
+                });
+            } else if (level === 'PIUT_CICIT') {
+                parentLabel.innerText = "Pilih Ibu / Bapa (Ahli Piut) *";
+                familyTreeData.forEach(anak => {
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) {
+                                cucu.children.forEach(cicit => {
+                                    if (cicit.children) {
+                                        cicit.children.forEach(piut => {
+                                            const opt = document.createElement('option');
+                                            opt.value = piut.id;
+                                            opt.text = `${piut.name} [Cicit: ${cicit.name}]`;
+                                            if (selectedParentId && piut.id === selectedParentId) opt.selected = true;
+                                            parentSelect.appendChild(opt);
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         }
 
@@ -1545,15 +1765,25 @@
                 const parentId = document.getElementById('formParentSelect').value;
                 const newId = "id_" + Date.now();
 
+                const newMemberObj = {
+                    id: newId,
+                    code: code,
+                    name: name,
+                    dob: dob,
+                    status: status,
+                    marriageDate: marriageDate,
+                    dod: dod,
+                    causeOfDeath: causeOfDeath,
+                    notes: notes,
+                    children: []
+                };
+
                 if (level === 'CUCU') {
                     const targetAnak = familyTreeData.find(a => a.id === parentId);
                     if (targetAnak) {
                         if (!targetAnak.children) targetAnak.children = [];
-                        targetAnak.children.push({
-                            id: newId, code: code || `(${targetAnak.children.length + 1})`,
-                            name: name, dob: dob, status: status, marriageDate: marriageDate,
-                            dod: dod, causeOfDeath: causeOfDeath, notes: notes, children: []
-                        });
+                        if (!newMemberObj.code) newMemberObj.code = `(${targetAnak.children.length + 1})`;
+                        targetAnak.children.push(newMemberObj);
                     }
                 } else if (level === 'CICIT') {
                     for (let anak of familyTreeData) {
@@ -1561,12 +1791,45 @@
                             let targetCucu = anak.children.find(c => c.id === parentId);
                             if (targetCucu) {
                                 if (!targetCucu.children) targetCucu.children = [];
-                                targetCucu.children.push({
-                                    id: newId, code: code || `[${targetCucu.children.length + 1}]`,
-                                    name: name, dob: dob, status: status, marriageDate: marriageDate,
-                                    dod: dod, causeOfDeath: causeOfDeath, notes: notes
-                                });
+                                if (!newMemberObj.code) newMemberObj.code = `[${targetCucu.children.length + 1}]`;
+                                targetCucu.children.push(newMemberObj);
                                 break;
+                            }
+                        }
+                    }
+                } else if (level === 'PIUT') {
+                    for (let anak of familyTreeData) {
+                        if (anak.children) {
+                            for (let cucu of anak.children) {
+                                if (cucu.children) {
+                                    let targetCicit = cucu.children.find(cc => cc.id === parentId);
+                                    if (targetCicit) {
+                                        if (!targetCicit.children) targetCicit.children = [];
+                                        if (!newMemberObj.code) newMemberObj.code = `<${targetCicit.children.length + 1}>`;
+                                        targetCicit.children.push(newMemberObj);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (level === 'PIUT_CICIT') {
+                    for (let anak of familyTreeData) {
+                        if (anak.children) {
+                            for (let cucu of anak.children) {
+                                if (cucu.children) {
+                                    for (let cicit of cucu.children) {
+                                        if (cicit.children) {
+                                            let targetPiut = cicit.children.find(p => p.id === parentId);
+                                            if (targetPiut) {
+                                                if (!targetPiut.children) targetPiut.children = [];
+                                                if (!newMemberObj.code) newMemberObj.code = `{${targetPiut.children.length + 1}}`;
+                                                targetPiut.children.push(newMemberObj);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1588,6 +1851,11 @@
         }
 
         async function deleteMember(id, level) {
+            if (currentUserRole !== 'ADMIN') {
+                showToast("Hanya PENTADBIR (ADMIN) dibenarkan memadam maklumat ahli!");
+                return;
+            }
+
             if (!confirm("Adakah anda pasti ingin memadam ahli keluarga ini?")) return;
 
             if (level === 'CUCU') {
@@ -1599,6 +1867,34 @@
                     if (anak.children) {
                         anak.children.forEach(cucu => {
                             if (cucu.children) cucu.children = cucu.children.filter(cc => cc.id !== id);
+                        });
+                    }
+                });
+            } else if (level === 'PIUT') {
+                familyTreeData.forEach(anak => {
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) {
+                                cucu.children.forEach(cicit => {
+                                    if (cicit.children) cicit.children = cicit.children.filter(p => p.id !== id);
+                                });
+                            }
+                        });
+                    }
+                });
+            } else if (level === 'PIUT_CICIT') {
+                familyTreeData.forEach(anak => {
+                    if (anak.children) {
+                        anak.children.forEach(cucu => {
+                            if (cucu.children) {
+                                cucu.children.forEach(cicit => {
+                                    if (cicit.children) {
+                                        cicit.children.forEach(piut => {
+                                            if (piut.children) piut.children = piut.children.filter(pc => pc.id !== id);
+                                        });
+                                    }
+                                });
+                            }
                         });
                     }
                 });
@@ -1621,6 +1917,11 @@
         }
 
         function importDataJSON(event) {
+            if (currentUserRole !== 'ADMIN') {
+                showToast("Hanya Pentadbir dibenarkan memuat naik fail JSON!");
+                return;
+            }
+
             const file = event.target.files[0];
             if (!file) return;
 
@@ -1652,6 +1953,12 @@
             const modal = document.getElementById('detailModal');
             const container = document.getElementById('modalContent');
 
+            const deleteBtnHtml = currentUserRole === 'ADMIN' ? `
+                <button onclick="deleteMember('${member.id}', '${member.role}'); closeModal('detailModal');" class="px-3 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold rounded-xl transition text-xs">
+                    <i class="fa-solid fa-trash"></i> Padam
+                </button>
+            ` : '';
+
             container.innerHTML = `
                 <div class="space-y-4 text-xs">
                     <div class="flex items-center gap-2">
@@ -1677,6 +1984,7 @@
                         <button onclick="openEditMemberModal('${member.id}')" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl transition shadow-sm flex items-center justify-center gap-2">
                             <i class="fa-solid fa-pen-to-square"></i> Kemaskini Maklumat
                         </button>
+                        ${deleteBtnHtml}
                         <button onclick="closeModal('detailModal')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition">
                             Tutup
                         </button>
@@ -1726,6 +2034,7 @@
                     .badge-anak { background: #dcfce7; color: #15803d; }
                     .badge-cucu { background: #dbeafe; color: #1e40af; }
                     .badge-cicit { background: #f3e8ff; color: #6b21a8; }
+                    .badge-piut { background: #ffe4e6; color: #9f1239; }
                     @media print { body { padding: 0; } }
                 </style>
             </head>
@@ -1813,6 +2122,21 @@
                                         <td>${cicit.status} ${cicit.notes ? ' (' + cicit.notes + ')' : ''}</td>
                                     </tr>
                                 `;
+
+                                if (cicit.children && cicit.children.length > 0) {
+                                    cicit.children.forEach(piut => {
+                                        printHTML += `
+                                            <tr>
+                                                <td>${piut.code || ''}</td>
+                                                <td><span class="badge badge-piut">Piut</span></td>
+                                                <td>${getFormattedNameWithAgePlain(piut)}</td>
+                                                <td>${piut.dob || '—'}</td>
+                                                <td>—</td>
+                                                <td>${piut.status} ${piut.notes ? ' (' + piut.notes + ')' : ''}</td>
+                                            </tr>
+                                        `;
+                                    });
+                                }
                             });
                         }
                     });
@@ -1855,6 +2179,18 @@
                         if (cucu.children) {
                             cucu.children.forEach(cicit => {
                                 csvRows.push([anak.branch, cicit.code || '', "Cicit", getFormattedNameWithAgePlain(cicit), cicit.status, cicit.dob || '', '', cicit.dod || '', cicit.causeOfDeath || '', cicit.notes || '']);
+
+                                if (cicit.children) {
+                                    cicit.children.forEach(piut => {
+                                        csvRows.push([anak.branch, piut.code || '', "Piut", getFormattedNameWithAgePlain(piut), piut.status, piut.dob || '', '', piut.dod || '', piut.causeOfDeath || '', piut.notes || '']);
+
+                                        if (piut.children) {
+                                            piut.children.forEach(pc => {
+                                                csvRows.push([anak.branch, pc.code || '', "Piut-Cicit", getFormattedNameWithAgePlain(pc), pc.status, pc.dob || '', '', pc.dod || '', pc.causeOfDeath || '', pc.notes || '']);
+                                            });
+                                        }
+                                    });
+                                }
                             });
                         }
                     });
